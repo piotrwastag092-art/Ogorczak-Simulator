@@ -6,60 +6,58 @@
 <title>Ogórczak – Przygody Marcina</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { overflow: hidden; background: #87CEEB; font-family: 'Segoe UI', system-ui, sans-serif; }
-  #gameCanvas { display: block; width: 100vw; height: 100vh; }
+  body { overflow: hidden; background: #1a2a1a; font-family: 'Segoe UI', system-ui, sans-serif; user-select: none; }
+  #gameCanvas { display: block; width: 100vw; height: 100vh; cursor: none; }
   
-  /* UI Overlay */
   #ui {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    pointer-events: none; color: white; text-shadow: 0 2px 6px rgba(0,0,0,0.9);
   }
   #ui > * { pointer-events: auto; }
   
   #hud {
     position: absolute; top: 16px; left: 16px;
-    background: rgba(0,0,0,0.55); padding: 12px 18px; border-radius: 12px;
-    backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(0,0,0,0.65); padding: 14px 20px; border-radius: 14px;
+    backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.12);
   }
-  #hud div { margin: 4px 0; font-size: 15px; }
+  #hud div { margin: 5px 0; font-size: 15px; }
   #score { font-size: 22px; font-weight: 700; color: #a8ff78; }
   
   #weaponInfo {
     position: absolute; top: 16px; right: 16px;
-    background: rgba(0,0,0,0.55); padding: 12px 18px; border-radius: 12px;
-    backdrop-filter: blur(8px); text-align: right;
+    background: rgba(0,0,0,0.65); padding: 14px 20px; border-radius: 14px;
+    backdrop-filter: blur(12px); text-align: right;
   }
   
   #messages {
-    position: absolute; bottom: 180px; left: 16px; max-width: 420px;
-    display: flex; flex-direction: column; gap: 8px;
+    position: absolute; bottom: 200px; left: 16px; max-width: 440px;
+    display: flex; flex-direction: column; gap: 10px;
   }
   .msg {
-    background: rgba(0,0,0,0.7); padding: 10px 14px; border-radius: 12px;
-    font-size: 14px; line-height: 1.4; animation: fadeIn 0.3s ease;
-    border-left: 4px solid #7cfc00;
+    background: rgba(0,0,0,0.78); padding: 12px 16px; border-radius: 14px;
+    font-size: 14px; line-height: 1.45; animation: fadeIn 0.4s ease;
+    border-left: 4px solid #7cfc00; max-width: 100%;
   }
   .msg.piotrek { border-left-color: #ff69b4; }
-  .msg.system { border-left-color: #87ceeb; }
-  .msg .author { font-weight: 700; margin-bottom: 2px; font-size: 12px; opacity: 0.85; }
+  .msg.system { border-left-color: #64b5f6; }
+  .msg .author { font-weight: 700; margin-bottom: 3px; font-size: 12px; opacity: 0.9; letter-spacing: 0.3px; }
   
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
   
   #chatBox {
-    position: absolute; bottom: 16px; left: 16px; width: 380px;
-    background: rgba(0,0,0,0.7); border-radius: 14px; padding: 12px;
-    backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12);
+    position: absolute; bottom: 16px; left: 16px; width: 400px;
+    background: rgba(0,0,0,0.75); border-radius: 16px; padding: 14px;
+    backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.1);
   }
-  #chatBox label { display: block; font-size: 12px; margin-bottom: 6px; opacity: 0.8; }
+  #chatBox label { display: block; font-size: 12px; margin-bottom: 8px; opacity: 0.75; }
   #chatInput {
-    width: 100%; padding: 10px 12px; border: none; border-radius: 8px;
-    background: rgba(255,255,255,0.12); color: white; font-size: 14px;
-    outline: none;
+    width: 100%; padding: 11px 14px; border: none; border-radius: 10px;
+    background: rgba(255,255,255,0.1); color: white; font-size: 14px; outline: none;
   }
-  #chatInput::placeholder { color: rgba(255,255,255,0.45); }
-  #chatButtons { display: flex; gap: 8px; margin-top: 8px; }
+  #chatInput::placeholder { color: rgba(255,255,255,0.4); }
+  #chatButtons { display: flex; gap: 8px; margin-top: 10px; }
   #chatButtons button {
-    flex: 1; padding: 8px; border: none; border-radius: 8px; cursor: pointer;
+    flex: 1; padding: 9px; border: none; border-radius: 10px; cursor: pointer;
     font-weight: 600; font-size: 13px; transition: 0.15s;
   }
   #btnPiotrek { background: #ff69b4; color: #111; }
@@ -69,41 +67,41 @@
   
   #controls {
     position: absolute; bottom: 16px; right: 16px;
-    background: rgba(0,0,0,0.55); padding: 12px 16px; border-radius: 12px;
-    font-size: 12px; line-height: 1.6; backdrop-filter: blur(8px);
+    background: rgba(0,0,0,0.6); padding: 12px 16px; border-radius: 12px;
+    font-size: 12px; line-height: 1.65; backdrop-filter: blur(10px);
   }
   
-  #crosshair {
-    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 8px; height: 8px; border: 2px solid rgba(255,255,255,0.7);
-    border-radius: 50%; pointer-events: none;
+  #weaponBar {
+    position: absolute; bottom: 110px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 12px;
   }
+  .weaponSlot {
+    width: 68px; height: 68px; background: rgba(0,0,0,0.65); border-radius: 14px;
+    border: 2px solid rgba(255,255,255,0.18); display: flex; align-items: center;
+    justify-content: center; font-size: 30px; cursor: pointer; transition: 0.15s;
+  }
+  .weaponSlot.active { border-color: #7cfc00; background: rgba(124,252,0,0.18); box-shadow: 0 0 12px rgba(124,252,0,0.3); }
+  .weaponSlot:hover { border-color: #a8ff78; }
   
   #startScreen {
-    position: absolute; inset: 0; background: linear-gradient(135deg, #1a2a1a, #0d1f0d);
+    position: absolute; inset: 0; background: linear-gradient(160deg, #0f1a0f, #1a2f1a 40%, #0d1f0d);
     display: flex; flex-direction: column; align-items: center; justify-content: center;
     z-index: 100; color: white; text-align: center;
   }
-  #startScreen h1 { font-size: 48px; margin-bottom: 8px; color: #a8ff78; text-shadow: 0 0 20px rgba(168,255,120,0.4); }
-  #startScreen p { max-width: 520px; margin: 12px 0; opacity: 0.85; line-height: 1.5; }
+  #startScreen h1 { font-size: 52px; margin-bottom: 10px; color: #a8ff78; text-shadow: 0 0 30px rgba(168,255,120,0.35); }
+  #startScreen p { max-width: 540px; margin: 10px 0; opacity: 0.88; line-height: 1.55; font-size: 15px; }
   #startScreen button {
-    margin-top: 24px; padding: 14px 40px; font-size: 18px; font-weight: 700;
-    border: none; border-radius: 12px; background: #7cfc00; color: #111; cursor: pointer;
-    transition: 0.2s; box-shadow: 0 4px 20px rgba(124,252,0,0.3);
+    margin-top: 28px; padding: 15px 48px; font-size: 18px; font-weight: 700;
+    border: none; border-radius: 14px; background: #7cfc00; color: #111; cursor: pointer;
+    transition: 0.2s; box-shadow: 0 6px 24px rgba(124,252,0,0.35);
   }
-  #startScreen button:hover { transform: scale(1.05); background: #a8ff78; }
+  #startScreen button:hover { transform: scale(1.04); background: #b4ff8a; }
   
-  #weaponBar {
-    position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px;
+  #clickHint {
+    position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+    background: rgba(0,0,0,0.75); padding: 16px 28px; border-radius: 12px;
+    font-size: 15px; pointer-events: none; display: none; z-index: 50;
   }
-  .weaponSlot {
-    width: 64px; height: 64px; background: rgba(0,0,0,0.6); border-radius: 12px;
-    border: 2px solid rgba(255,255,255,0.2); display: flex; align-items: center;
-    justify-content: center; font-size: 28px; cursor: pointer; transition: 0.15s;
-  }
-  .weaponSlot.active { border-color: #7cfc00; background: rgba(124,252,0,0.2); }
-  .weaponSlot:hover { border-color: #a8ff78; }
 </style>
 </head>
 <body>
@@ -111,9 +109,11 @@
   <h1>🥒 Ogórczak</h1>
   <p>Marcin, witaj w świecie pełnym grzybów, kur i jednego bardzo złośliwego dzika.<br>
   Piotrek czeka na Ciebie. Ogórczak też ma Ci sporo do powiedzenia.</p>
-  <p style="font-size:13px;opacity:0.6">WASD – ruch | Mysz – kamera | 1-3 – broń | Spacja – atak | E – interakcja z Piotrkiem</p>
+  <p style="font-size:13px;opacity:0.55;margin-top:8px">WASD – ruch &nbsp;|&nbsp; Mysz – kamera &nbsp;|&nbsp; 1-3 – broń &nbsp;|&nbsp; Spacja – atak &nbsp;|&nbsp; E – Piotrek</p>
   <button id="startBtn">Wejdź do gry</button>
 </div>
+
+<div id="clickHint">Kliknij, żeby przejąć mysz</div>
 
 <canvas id="gameCanvas"></canvas>
 
@@ -126,14 +126,14 @@
   
   <div id="weaponInfo">
     <div id="currentWeapon">Broń: Oszczep z ogórka</div>
-    <div style="font-size:12px;opacity:0.7;margin-top:4px">1 / 2 / 3 – zmiana broni</div>
+    <div style="font-size:12px;opacity:0.65;margin-top:4px">1 / 2 / 3 – zmiana broni</div>
   </div>
   
   <div id="messages"></div>
   
   <div id="chatBox">
-    <label>Napisz do Piotrka lub na czat multiplayer:</label>
-    <input id="chatInput" type="text" placeholder="Napisz coś do Piotrka..." maxlength="120">
+    <label>Napisz do Piotrka lub na czat:</label>
+    <input id="chatInput" type="text" placeholder="Napisz coś do Piotrka..." maxlength="140" autocomplete="off">
     <div id="chatButtons">
       <button id="btnPiotrek">Do Piotrka</button>
       <button id="btnChat">Czat graczy</button>
@@ -151,24 +151,21 @@
     Mysz – obrót kamery<br>
     1 2 3 – broń<br>
     Spacja – atak<br>
-    E – porozmawiaj z Piotrkiem
+    E – porozmawiaj z Piotrkiem<br>
+    Esc – zwolnij mysz
   </div>
-  
-  <div id="crosshair"></div>
 </div>
 
 <script type="importmap">
 {
   "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js"
   }
 }
 </script>
 
 <script type="module">
 import * as THREE from 'three';
-import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
 
 // ==================== STATE ====================
 const state = {
@@ -176,20 +173,24 @@ const state = {
   health: 100,
   weapon: 0,
   weapons: [
-    { name: 'Oszczep z ogórka', emoji: '🥒', damage: 25, cooldown: 0.6 },
-    { name: 'Majonezowa bomba', emoji: '🥄', damage: 40, cooldown: 1.2 },
-    { name: 'Koperkowy granat', emoji: '🌿', damage: 35, cooldown: 1.0 }
+    { name: 'Oszczep z ogórka', damage: 28, cooldown: 0.55 },
+    { name: 'Majonezowa bomba', damage: 45, cooldown: 1.1 },
+    { name: 'Koperkowy granat', damage: 38, cooldown: 0.95 }
   ],
   lastAttack: 0,
   keys: {},
-  pointerLocked: false,
+  mouseDown: false,
   gameStarted: false,
-  ogorczakTalkCooldown: 0,
-  poopCooldown: 0,
-  lastPiotrekReply: 0
+  pointerCaptured: false,
+  ogorczakTalkCooldown: 18,   // dłuższy startowy cooldown
+  poopCooldown: 25,
+  camYaw: 0,
+  camPitch: 0.28,
+  targetCamYaw: 0,
+  targetCamPitch: 0.28
 };
 
-// ==================== SCENE ====================
+// ==================== RENDERER & SCENE ====================
 const canvas = document.getElementById('gameCanvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -197,294 +198,321 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.1;
+renderer.toneMappingExposure = 1.05;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x87CEEB);
-scene.fog = new THREE.Fog(0x87CEEB, 40, 120);
+scene.background = new THREE.Color(0x7ec8e3);
+scene.fog = new THREE.FogExp2(0x7ec8e3, 0.012);
 
-const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 200);
-camera.position.set(0, 5, 10);
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 250);
 
-// Lights
-const ambient = new THREE.AmbientLight(0xb0d0ff, 0.55);
-scene.add(ambient);
-const sun = new THREE.DirectionalLight(0xfff5e0, 1.15);
-sun.position.set(30, 50, 20);
+// Lights – lepsze oświetlenie
+const hemi = new THREE.HemisphereLight(0xb1e1ff, 0x3d5c2e, 0.55);
+scene.add(hemi);
+
+const sun = new THREE.DirectionalLight(0xfff4e0, 1.35);
+sun.position.set(40, 60, 25);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.near = 1;
-sun.shadow.camera.far = 120;
-sun.shadow.camera.left = -50;
-sun.shadow.camera.right = 50;
-sun.shadow.camera.top = 50;
-sun.shadow.camera.bottom = -50;
+sun.shadow.camera.near = 2;
+sun.shadow.camera.far = 140;
+sun.shadow.camera.left = -55;
+sun.shadow.camera.right = 55;
+sun.shadow.camera.top = 55;
+sun.shadow.camera.bottom = -55;
+sun.shadow.bias = -0.0003;
 scene.add(sun);
 
+const fill = new THREE.DirectionalLight(0xa0c4ff, 0.25);
+fill.position.set(-20, 15, -30);
+scene.add(fill);
+
 // ==================== GROUND ====================
-const groundGeo = new THREE.PlaneGeometry(200, 200, 32, 32);
-const groundMat = new THREE.MeshStandardMaterial({ 
-  color: 0x4a7c3f, 
-  roughness: 0.9,
-  metalness: 0.05
+const groundGeo = new THREE.PlaneGeometry(220, 220, 64, 64);
+// lekkie pofalowanie
+const pos = groundGeo.attributes.position;
+for (let i = 0; i < pos.count; i++) {
+  const x = pos.getX(i), y = pos.getY(i);
+  pos.setZ(i, Math.sin(x * 0.08) * 0.15 + Math.cos(y * 0.07) * 0.12);
+}
+groundGeo.computeVertexNormals();
+
+const groundMat = new THREE.MeshStandardMaterial({
+  color: 0x4c8a3f,
+  roughness: 0.92,
+  metalness: 0.02
 });
 const ground = new THREE.Mesh(groundGeo, groundMat);
 ground.rotation.x = -Math.PI / 2;
 ground.receiveShadow = true;
 scene.add(ground);
 
-// Decorative grass patches
-for (let i = 0; i < 80; i++) {
-  const g = new THREE.Mesh(
-    new THREE.ConeGeometry(0.15 + Math.random()*0.1, 0.4 + Math.random()*0.3, 5),
-    new THREE.MeshStandardMaterial({ color: 0x3d8b37, roughness: 0.8 })
-  );
-  g.position.set((Math.random()-0.5)*180, 0.2, (Math.random()-0.5)*180);
+// Trawa – więcej i ładniejsza
+const grassMat = new THREE.MeshStandardMaterial({ color: 0x3a9b35, roughness: 0.75 });
+for (let i = 0; i < 140; i++) {
+  const h = 0.35 + Math.random() * 0.45;
+  const g = new THREE.Mesh(new THREE.ConeGeometry(0.08 + Math.random()*0.06, h, 4), grassMat);
+  g.position.set((Math.random()-0.5)*190, h/2, (Math.random()-0.5)*190);
+  g.rotation.y = Math.random() * Math.PI;
   g.castShadow = true;
   scene.add(g);
 }
 
-// Trees
+// Drzewa – ładniejsze
 function makeTree(x, z) {
+  const group = new THREE.Group();
   const trunk = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.3, 0.4, 2.2, 8),
-    new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 })
+    new THREE.CylinderGeometry(0.28, 0.38, 2.4, 7),
+    new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.88 })
   );
-  trunk.position.set(x, 1.1, z);
+  trunk.position.y = 1.2;
   trunk.castShadow = true;
-  scene.add(trunk);
-  
-  const leaves = new THREE.Mesh(
-    new THREE.SphereGeometry(1.6, 8, 6),
-    new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.85 })
-  );
-  leaves.position.set(x, 3.2, z);
-  leaves.castShadow = true;
-  scene.add(leaves);
+  group.add(trunk);
+
+  const leafMat = new THREE.MeshStandardMaterial({ color: 0x2e7d32, roughness: 0.8 });
+  [[0, 3.1, 0, 1.7], [0.5, 2.7, 0.4, 1.2], [-0.45, 2.8, -0.3, 1.15]].forEach(([lx, ly, lz, s]) => {
+    const leaf = new THREE.Mesh(new THREE.IcosahedronGeometry(s, 0), leafMat);
+    leaf.position.set(lx, ly, lz);
+    leaf.castShadow = true;
+    group.add(leaf);
+  });
+  group.position.set(x, 0, z);
+  scene.add(group);
 }
-for (let i = 0; i < 25; i++) {
-  makeTree((Math.random()-0.5)*160, (Math.random()-0.5)*160);
+for (let i = 0; i < 22; i++) {
+  const a = Math.random() * Math.PI * 2;
+  const r = 18 + Math.random() * 75;
+  makeTree(Math.cos(a) * r, Math.sin(a) * r);
 }
 
-// ==================== OGÓRCZAK (Player) ====================
+// ==================== OGÓRCZAK ====================
 const player = new THREE.Group();
 player.position.set(0, 0, 0);
 
-// Body (tall green cucumber)
-const body = new THREE.Mesh(
-  new THREE.BoxGeometry(1.1, 2.8, 1.1),
-  new THREE.MeshStandardMaterial({ color: 0x5a8f3a, roughness: 0.7 })
-);
-body.position.y = 1.4;
+// Ciało – wyższe, bardziej „ogórkowe”
+const bodyMat = new THREE.MeshStandardMaterial({ color: 0x5b9a3a, roughness: 0.65, metalness: 0.05 });
+const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.58, 1.9, 6, 12), bodyMat);
+body.position.y = 1.55;
 body.castShadow = true;
 player.add(body);
 
-// Darker patches for "pixel" look
-const patchMat = new THREE.MeshStandardMaterial({ color: 0x3d6b28, roughness: 0.75 });
-[[-0.35,0.3,0.56],[0.3,-0.4,0.56],[-0.2,0.9,0.56],[0.25,1.5,0.56]].forEach(([x,y,z]) => {
-  const p = new THREE.Mesh(new THREE.BoxGeometry(0.35,0.35,0.05), patchMat);
-  p.position.set(x, y+1.4, z);
+// Ciemniejsze „piksele”
+const patchMat = new THREE.MeshStandardMaterial({ color: 0x3f6f28, roughness: 0.7 });
+[[-0.32, 0.9, 0.52], [0.28, 0.3, 0.52], [-0.18, 1.7, 0.5], [0.22, 1.3, 0.52]].forEach(([x,y,z]) => {
+  const p = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.32, 0.08), patchMat);
+  p.position.set(x, y + 0.6, z);
   player.add(p);
 });
 
-// Eyes
+// Oczy
 const eyeMat = new THREE.MeshStandardMaterial({ color: 0x111111 });
-const leftEye = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.22, 0.12), eyeMat);
-leftEye.position.set(-0.28, 2.35, 0.55);
+const leftEye = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.2, 0.1), eyeMat);
+leftEye.position.set(-0.26, 2.45, 0.5);
 player.add(leftEye);
-const rightEye = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.22, 0.12), eyeMat);
-rightEye.position.set(0.28, 2.35, 0.55);
+const rightEye = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.2, 0.1), eyeMat);
+rightEye.position.set(0.26, 2.45, 0.5);
 player.add(rightEye);
 
-// Beak (yellow-brown)
-const beak = new THREE.Mesh(
-  new THREE.BoxGeometry(0.95, 0.45, 0.7),
-  new THREE.MeshStandardMaterial({ color: 0xd4a017, roughness: 0.55 })
-);
-beak.position.set(0, 1.95, 0.85);
+// Dziób
+const beakMat = new THREE.MeshStandardMaterial({ color: 0xd4a017, roughness: 0.5 });
+const beak = new THREE.Mesh(new THREE.BoxGeometry(0.9, 0.42, 0.65), beakMat);
+beak.position.set(0, 2.05, 0.78);
 player.add(beak);
-const beakLower = new THREE.Mesh(
-  new THREE.BoxGeometry(0.9, 0.28, 0.55),
-  new THREE.MeshStandardMaterial({ color: 0xb8860b, roughness: 0.6 })
-);
-beakLower.position.set(0, 1.7, 0.75);
-player.add(beakLower);
+const beakLow = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.26, 0.5), new THREE.MeshStandardMaterial({ color: 0xb8860b }));
+beakLow.position.set(0, 1.78, 0.7);
+player.add(beakLow);
 
-// Tongue
-const tongue = new THREE.Mesh(
-  new THREE.BoxGeometry(0.35, 0.55, 0.12),
-  new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.5 })
-);
-tongue.position.set(0, 1.45, 0.95);
+// Język
+const tongue = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.5, 0.1), new THREE.MeshStandardMaterial({ color: 0xe53935, roughness: 0.45 }));
+tongue.position.set(0, 1.5, 0.88);
 player.add(tongue);
 
-// Sprout on head
-const sproutMat = new THREE.MeshStandardMaterial({ color: 0x90ee90, roughness: 0.4, transparent: true, opacity: 0.9 });
-const sprout1 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.7, 0.12), sproutMat);
-sprout1.position.set(-0.12, 3.15, 0);
-player.add(sprout1);
-const sprout2 = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.55, 0.12), sproutMat);
-sprout2.position.set(0.1, 3.05, 0.05);
-player.add(sprout2);
+// Kiełka
+const sproutMat = new THREE.MeshStandardMaterial({ color: 0x98fb98, roughness: 0.35, transparent: true, opacity: 0.92 });
+const s1 = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.65, 0.11), sproutMat);
+s1.position.set(-0.1, 3.15, 0);
+player.add(s1);
+const s2 = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.5, 0.11), sproutMat);
+s2.position.set(0.12, 3.05, 0.04);
+player.add(s2);
 
 scene.add(player);
 
-// Player velocity & direction
 const velocity = new THREE.Vector3();
-const direction = new THREE.Vector3();
 let playerYaw = 0;
 
-// ==================== PIOTREK (NPC) ====================
+// ==================== PIOTREK – poprawiony model (bliżej selfie) ====================
 const piotrek = new THREE.Group();
-piotrek.position.set(8, 0, -6);
+piotrek.position.set(9, 0, -5);
 
-// Simple stylized human (for performance)
+// Ciało – czarna koszulka
 const pBody = new THREE.Mesh(
-  new THREE.CapsuleGeometry(0.45, 1.3, 4, 8),
-  new THREE.MeshStandardMaterial({ color: 0x222222 })
+  new THREE.CapsuleGeometry(0.42, 1.15, 5, 10),
+  new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.7 })
 );
-pBody.position.y = 1.4;
+pBody.position.y = 1.35;
 pBody.castShadow = true;
 piotrek.add(pBody);
 
-const pHead = new THREE.Mesh(
-  new THREE.SphereGeometry(0.38, 12, 10),
-  new THREE.MeshStandardMaterial({ color: 0xf1c27d })
-);
-pHead.position.y = 2.45;
+// Rękawy / ramiona
+const armMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a });
+[-0.55, 0.55].forEach(x => {
+  const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.12, 0.55, 4, 6), armMat);
+  arm.position.set(x, 1.45, 0);
+  arm.castShadow = true;
+  piotrek.add(arm);
+});
+
+// Głowa – jaśniejsza karnacja
+const headMat = new THREE.MeshStandardMaterial({ color: 0xf0c8a0, roughness: 0.55 });
+const pHead = new THREE.Mesh(new THREE.SphereGeometry(0.36, 14, 12), headMat);
+pHead.position.y = 2.35;
 pHead.castShadow = true;
 piotrek.add(pHead);
 
-// Hair
-const hair = new THREE.Mesh(
-  new THREE.SphereGeometry(0.42, 10, 8),
-  new THREE.MeshStandardMaterial({ color: 0x4a3728 })
-);
-hair.position.y = 2.6;
-hair.scale.set(1, 0.7, 1);
-piotrek.add(hair);
+// Włosy – brązowe, niesforne (jak na selfie)
+const hairMat = new THREE.MeshStandardMaterial({ color: 0x5c3a22, roughness: 0.85 });
+const hairBase = new THREE.Mesh(new THREE.SphereGeometry(0.39, 12, 10), hairMat);
+hairBase.position.y = 2.48;
+hairBase.scale.set(1.05, 0.85, 1.05);
+piotrek.add(hairBase);
+
+// Grzywka / niesforne kosmyki
+[[-0.18, 2.65, 0.22], [0.15, 2.7, 0.2], [0, 2.78, 0.05], [-0.25, 2.55, -0.15], [0.22, 2.58, -0.1]].forEach(([x,y,z]) => {
+  const strand = new THREE.Mesh(new THREE.SphereGeometry(0.12 + Math.random()*0.06, 6, 5), hairMat);
+  strand.position.set(x, y, z);
+  piotrek.add(strand);
+});
+
+// Oczy
+const pEyeMat = new THREE.MeshStandardMaterial({ color: 0x2a2a2a });
+const pLeftEye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 5), pEyeMat);
+pLeftEye.position.set(-0.12, 2.38, 0.32);
+piotrek.add(pLeftEye);
+const pRightEye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 5), pEyeMat);
+pRightEye.position.set(0.12, 2.38, 0.32);
+piotrek.add(pRightEye);
+
+// Nos
+const nose = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.12, 5), new THREE.MeshStandardMaterial({ color: 0xe0b090 }));
+nose.rotation.x = Math.PI / 2;
+nose.position.set(0, 2.28, 0.36);
+piotrek.add(nose);
+
+// Usta
+const mouth = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.035, 0.04), new THREE.MeshStandardMaterial({ color: 0xc07070 }));
+mouth.position.set(0, 2.15, 0.34);
+piotrek.add(mouth);
+
+// Nogi
+const legMat = new THREE.MeshStandardMaterial({ color: 0x222222 });
+[-0.2, 0.2].forEach(x => {
+  const leg = new THREE.Mesh(new THREE.CapsuleGeometry(0.13, 0.7, 4, 6), legMat);
+  leg.position.set(x, 0.45, 0);
+  leg.castShadow = true;
+  piotrek.add(leg);
+});
 
 scene.add(piotrek);
 
-// Name tag
+// Etykieta
 const nameCanvas = document.createElement('canvas');
-nameCanvas.width = 256; nameCanvas.height = 64;
+nameCanvas.width = 280; nameCanvas.height = 64;
 const nctx = nameCanvas.getContext('2d');
-nctx.fillStyle = 'rgba(0,0,0,0.6)';
-nctx.roundRect(20, 10, 216, 44, 10);
+nctx.fillStyle = 'rgba(0,0,0,0.65)';
+nctx.beginPath();
+nctx.roundRect(10, 8, 260, 48, 12);
 nctx.fill();
 nctx.fillStyle = '#ff69b4';
-nctx.font = 'bold 28px sans-serif';
+nctx.font = 'bold 26px system-ui, sans-serif';
 nctx.textAlign = 'center';
-nctx.fillText('Piotrek ❤️', 128, 42);
+nctx.fillText('Piotrek ❤️', 140, 42);
 const nameTex = new THREE.CanvasTexture(nameCanvas);
-const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: nameTex, transparent: true }));
-nameSprite.scale.set(2.5, 0.6, 1);
-nameSprite.position.y = 3.2;
+const nameSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: nameTex, transparent: true, depthTest: false }));
+nameSprite.scale.set(2.8, 0.65, 1);
+nameSprite.position.y = 3.15;
 piotrek.add(nameSprite);
 
-// ==================== MUSHROOMS ====================
+// ==================== GRZYBY ====================
 const mushrooms = [];
-const mushroomGeo = new THREE.SphereGeometry(0.35, 8, 6);
-const stemGeo = new THREE.CylinderGeometry(0.12, 0.15, 0.4, 6);
-
 function spawnMushroom() {
-  const group = new THREE.Group();
-  const cap = new THREE.Mesh(mushroomGeo, new THREE.MeshStandardMaterial({ 
-    color: Math.random() > 0.5 ? 0xc62828 : 0xf5f5f5, roughness: 0.6 
-  }));
-  cap.position.y = 0.55;
-  cap.scale.y = 0.6;
-  group.add(cap);
-  const stem = new THREE.Mesh(stemGeo, new THREE.MeshStandardMaterial({ color: 0xf0e6d0 }));
-  stem.position.y = 0.2;
-  group.add(stem);
-  
-  group.position.set((Math.random()-0.5)*90, 0, (Math.random()-0.5)*90);
-  group.userData = { collected: false };
-  scene.add(group);
-  mushrooms.push(group);
+  const g = new THREE.Group();
+  const isRed = Math.random() > 0.45;
+  const cap = new THREE.Mesh(
+    new THREE.SphereGeometry(0.38, 10, 7),
+    new THREE.MeshStandardMaterial({ color: isRed ? 0xc62828 : 0xf5f5f5, roughness: 0.55 })
+  );
+  cap.position.y = 0.58;
+  cap.scale.y = 0.55;
+  cap.castShadow = true;
+  g.add(cap);
+  const stem = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.11, 0.14, 0.42, 7),
+    new THREE.MeshStandardMaterial({ color: 0xf0e6d0, roughness: 0.7 })
+  );
+  stem.position.y = 0.22;
+  g.add(stem);
+  g.position.set((Math.random()-0.5)*100, 0, (Math.random()-0.5)*100);
+  // nie za blisko startu
+  if (g.position.length() < 8) g.position.setLength(10 + Math.random()*5);
+  g.userData = { collected: false };
+  scene.add(g);
+  mushrooms.push(g);
 }
-for (let i = 0; i < 35; i++) spawnMushroom();
+for (let i = 0; i < 40; i++) spawnMushroom();
 
-// ==================== CHICKENS ====================
+// ==================== KURY ====================
 const chickens = [];
 function makeChicken() {
   const g = new THREE.Group();
-  const body = new THREE.Mesh(
-    new THREE.SphereGeometry(0.35, 8, 6),
-    new THREE.MeshStandardMaterial({ color: 0xfff8e7 })
-  );
-  body.position.y = 0.4;
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.32, 8, 6), new THREE.MeshStandardMaterial({ color: 0xfff8e7, roughness: 0.7 }));
+  body.position.y = 0.38;
+  body.castShadow = true;
   g.add(body);
-  const head = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2, 6, 5),
-    new THREE.MeshStandardMaterial({ color: 0xfff8e7 })
-  );
-  head.position.set(0.25, 0.65, 0);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 7, 5), new THREE.MeshStandardMaterial({ color: 0xfff8e7 }));
+  head.position.set(0.28, 0.6, 0);
   g.add(head);
-  const comb = new THREE.Mesh(
-    new THREE.BoxGeometry(0.08, 0.15, 0.12),
-    new THREE.MeshStandardMaterial({ color: 0xe53935 })
-  );
-  comb.position.set(0.25, 0.85, 0);
+  const comb = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.14, 0.1), new THREE.MeshStandardMaterial({ color: 0xe53935 }));
+  comb.position.set(0.28, 0.78, 0);
   g.add(comb);
-  const beak = new THREE.Mesh(
-    new THREE.ConeGeometry(0.06, 0.15, 4),
-    new THREE.MeshStandardMaterial({ color: 0xffa000 })
-  );
+  const beak = new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.13, 4), new THREE.MeshStandardMaterial({ color: 0xffa000 }));
   beak.rotation.z = -Math.PI/2;
-  beak.position.set(0.42, 0.62, 0);
+  beak.position.set(0.42, 0.58, 0);
   g.add(beak);
-  
-  g.position.set((Math.random()-0.5)*70, 0, (Math.random()-0.5)*70);
-  g.userData = { 
-    vx: (Math.random()-0.5)*1.5, 
-    vz: (Math.random()-0.5)*1.5,
-    timer: Math.random()*3
-  };
+  g.position.set((Math.random()-0.5)*80, 0, (Math.random()-0.5)*80);
+  g.userData = { vx: (Math.random()-0.5)*1.8, vz: (Math.random()-0.5)*1.8, timer: Math.random()*4 };
   scene.add(g);
   chickens.push(g);
 }
-for (let i = 0; i < 12; i++) makeChicken();
+for (let i = 0; i < 14; i++) makeChicken();
 
-// ==================== WILD BOAR ====================
+// ==================== DZIK ====================
 const boar = new THREE.Group();
-const boarBody = new THREE.Mesh(
-  new THREE.BoxGeometry(1.6, 0.9, 0.9),
-  new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.85 })
-);
-boarBody.position.y = 0.55;
+const boarBody = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.95, 0.95), new THREE.MeshStandardMaterial({ color: 0x4e342e, roughness: 0.85 }));
+boarBody.position.y = 0.58;
 boarBody.castShadow = true;
 boar.add(boarBody);
-
-const boarHead = new THREE.Mesh(
-  new THREE.BoxGeometry(0.7, 0.6, 0.7),
-  new THREE.MeshStandardMaterial({ color: 0x3e2723 })
-);
-boarHead.position.set(0.9, 0.6, 0);
+const boarHead = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.65, 0.7), new THREE.MeshStandardMaterial({ color: 0x3e2723 }));
+boarHead.position.set(1.0, 0.62, 0);
 boar.add(boarHead);
-
-// Tusks
 const tuskMat = new THREE.MeshStandardMaterial({ color: 0xf5f5f5 });
-[-0.2, 0.2].forEach(z => {
-  const t = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.25, 5), tuskMat);
+[-0.18, 0.18].forEach(z => {
+  const t = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.28, 5), tuskMat);
   t.rotation.z = Math.PI/2;
-  t.position.set(1.25, 0.4, z);
+  t.position.set(1.35, 0.42, z);
   boar.add(t);
 });
-
-boar.position.set(-25, 0, -20);
+boar.position.set(-28, 0, -22);
 scene.add(boar);
 
 let boarState = 'patrol';
-let boarTarget = new THREE.Vector3();
-let boarCooldown = 0;
+let boarTarget = new THREE.Vector3(-20, 0, -15);
 
-// ==================== PROJECTILES ====================
+// ==================== POCISKI ====================
 const projectiles = [];
 
-// ==================== UI HELPERS ====================
+// ==================== UI ====================
 function addMessage(text, type = 'ogorczak') {
   const el = document.createElement('div');
   el.className = 'msg ' + type;
@@ -492,8 +520,10 @@ function addMessage(text, type = 'ogorczak') {
   el.innerHTML = `<div class="author">${author}</div>${text}`;
   const box = document.getElementById('messages');
   box.appendChild(el);
-  if (box.children.length > 5) box.removeChild(box.firstChild);
-  setTimeout(() => el.remove(), 8000);
+  // max 4 wiadomości
+  while (box.children.length > 4) box.removeChild(box.firstChild);
+  // dłuższy czas wyświetlania
+  setTimeout(() => { if (el.parentNode) el.remove(); }, 11000);
 }
 
 const ogorczakLines = [
@@ -513,13 +543,13 @@ const ogorczakLines = [
 
 const piotrekReplies = {
   default: [
-    'Hej Marcin ❤️ co tam?',
+    'Hej Marcin ❤️ co tam u Ciebie?',
     'Kocham Cię, nawet jak grasz ogórkiem.',
-    'Uważaj na tego dzika, proszę.',
+    'Uważaj na tego dzika, proszę Cię.',
     'Przynieś mi grzyba, to Cię pocałuję. W grze oczywiście.',
     'Jesteś najsłodszym graczem na świecie.',
     'Ogórczak wygląda dziś szczególnie dumnie.',
-    'Napisz co robisz, słucham.'
+    'Napisz co robisz, słucham Cię.'
   ],
   love: [
     'Ja Ciebie też kocham najbardziej na świecie ❤️',
@@ -546,37 +576,56 @@ const piotrekReplies = {
 function replyToPiotrek(text) {
   const t = text.toLowerCase();
   let pool = piotrekReplies.default;
-  if (t.includes('kocham') || t.includes('miłość') || t.includes('serce') || t.includes('❤️')) pool = piotrekReplies.love;
-  else if (t.includes('grzyb')) pool = piotrekReplies.grzyb;
-  else if (t.includes('dzik')) pool = piotrekReplies.dzik;
-  else if (t.includes('kupa') || t.includes('sraj') || t.includes('kupę')) pool = piotrekReplies.kupa;
-  
+  if (/kocham|miłość|serce|❤️|love/.test(t)) pool = piotrekReplies.love;
+  else if (/grzyb/.test(t)) pool = piotrekReplies.grzyb;
+  else if (/dzik/.test(t)) pool = piotrekReplies.dzik;
+  else if (/kupa|sraj|kupę|sranie/.test(t)) pool = piotrekReplies.kupa;
   const reply = pool[Math.floor(Math.random() * pool.length)];
-  setTimeout(() => addMessage(reply, 'piotrek'), 400 + Math.random()*600);
+  setTimeout(() => addMessage(reply, 'piotrek'), 600 + Math.random() * 700);
 }
 
-// ==================== CONTROLS ====================
-const controls = new PointerLockControls(camera, document.body);
+// ==================== STEROWANIE – NOWA KAMERA ====================
+const sensitivity = 0.0022;
+
+function onMouseMove(e) {
+  if (!state.pointerCaptured || !state.gameStarted) return;
+  state.targetCamYaw -= e.movementX * sensitivity;
+  state.targetCamPitch -= e.movementY * sensitivity;
+  state.targetCamPitch = Math.max(-0.35, Math.min(0.75, state.targetCamPitch));
+}
+
+function capturePointer() {
+  canvas.requestPointerLock();
+}
+function onPointerLockChange() {
+  state.pointerCaptured = document.pointerLockElement === canvas;
+  document.getElementById('clickHint').style.display = state.pointerCaptured ? 'none' : (state.gameStarted ? 'block' : 'none');
+}
 
 document.getElementById('startBtn').addEventListener('click', () => {
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('ui').style.display = 'block';
   state.gameStarted = true;
-  controls.lock();
-  addMessage('No cześć Marcin. Gotowy na grzyby i miłość?', 'ogorczak');
-  setTimeout(() => addMessage('Pamiętaj – Piotrek na Ciebie czeka po prawej stronie od startu.', 'ogorczak'), 2500);
+  capturePointer();
+  // wolniejsze pierwsze wiadomości
+  setTimeout(() => addMessage('No cześć Marcin. Gotowy na grzyby i miłość?', 'ogorczak'), 1500);
+  setTimeout(() => addMessage('Piotrek stoi niedaleko – szukaj różowej etykiety.', 'ogorczak'), 6000);
 });
 
-controls.addEventListener('lock', () => { state.pointerLocked = true; });
-controls.addEventListener('unlock', () => { state.pointerLocked = false; });
+document.addEventListener('pointerlockchange', onPointerLockChange);
+canvas.addEventListener('click', () => {
+  if (state.gameStarted && !state.pointerCaptured) capturePointer();
+});
+document.addEventListener('mousemove', onMouseMove);
 
 document.addEventListener('keydown', e => {
   state.keys[e.code] = true;
   if (e.code === 'Digit1') setWeapon(0);
   if (e.code === 'Digit2') setWeapon(1);
   if (e.code === 'Digit3') setWeapon(2);
-  if (e.code === 'Space') attack();
+  if (e.code === 'Space') { e.preventDefault(); attack(); }
   if (e.code === 'KeyE') interactPiotrek();
+  if (e.code === 'Escape') document.exitPointerLock();
 });
 document.addEventListener('keyup', e => { state.keys[e.code] = false; });
 
@@ -586,222 +635,233 @@ document.querySelectorAll('.weaponSlot').forEach(slot => {
 
 function setWeapon(i) {
   state.weapon = i;
-  document.querySelectorAll('.weaponSlot').forEach((s, idx) => {
-    s.classList.toggle('active', idx === i);
-  });
+  document.querySelectorAll('.weaponSlot').forEach((s, idx) => s.classList.toggle('active', idx === i));
   document.getElementById('currentWeapon').textContent = 'Broń: ' + state.weapons[i].name;
 }
 
-// Chat
-document.getElementById('btnPiotrek').addEventListener('click', () => {
+document.getElementById('btnPiotrek').addEventListener('click', sendToPiotrek);
+document.getElementById('btnChat').addEventListener('click', () => {
+  const input = document.getElementById('chatInput');
+  const txt = input.value.trim();
+  if (!txt) return;
+  addMessage('Czat: ' + txt, 'system');
+  setTimeout(() => addMessage('Inny gracz: łoł ogórek legendą 🥒', 'system'), 900);
+  input.value = '';
+});
+document.getElementById('chatInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendToPiotrek();
+  }
+  // nie blokuj liter gdy czat jest aktywny
+  e.stopPropagation();
+});
+
+function sendToPiotrek() {
   const input = document.getElementById('chatInput');
   const txt = input.value.trim();
   if (!txt) return;
   addMessage('Ty → Piotrek: ' + txt, 'system');
   replyToPiotrek(txt);
   input.value = '';
-});
-document.getElementById('btnChat').addEventListener('click', () => {
-  const input = document.getElementById('chatInput');
-  const txt = input.value.trim();
-  if (!txt) return;
-  addMessage('Czat: ' + txt, 'system');
-  // Simulated multiplayer response
-  setTimeout(() => addMessage('Inny gracz: łoł ogórek legendą', 'system'), 800);
-  input.value = '';
-});
-document.getElementById('chatInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    document.getElementById('btnPiotrek').click();
-  }
-});
+}
 
 function interactPiotrek() {
   const dist = player.position.distanceTo(piotrek.position);
-  if (dist < 4) {
-    addMessage('Piotrek jest tuż obok. Napisz mu coś w czacie na dole!', 'system');
+  if (dist < 5) {
+    addMessage('Piotrek jest tuż obok. Napisz mu coś na dole.', 'system');
     document.getElementById('chatInput').focus();
+    document.exitPointerLock();
   } else {
-    addMessage('Piotrek jest za daleko. Podejdź bliżej (szukaj różowej etykiety).', 'system');
+    addMessage('Piotrek jest za daleko. Podejdź bliżej (różowa etykieta).', 'system');
   }
 }
 
-// ==================== COMBAT ====================
+// ==================== ATAK ====================
 function attack() {
   const now = performance.now() / 1000;
   const w = state.weapons[state.weapon];
   if (now - state.lastAttack < w.cooldown) return;
   state.lastAttack = now;
-  
-  // Create projectile
-  const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(player.quaternion);
+
+  const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0,1,0), playerYaw);
   const proj = new THREE.Mesh(
-    new THREE.SphereGeometry(0.2, 6, 5),
-    new THREE.MeshStandardMaterial({ 
-      color: state.weapon === 0 ? 0x7cfc00 : state.weapon === 1 ? 0xfff8e1 : 0x66bb6a 
+    new THREE.SphereGeometry(0.22, 7, 6),
+    new THREE.MeshStandardMaterial({
+      color: state.weapon === 0 ? 0x7cfc00 : state.weapon === 1 ? 0xfff8e1 : 0x66bb6a,
+      emissive: state.weapon === 1 ? 0x443300 : 0x000000,
+      emissiveIntensity: 0.3
     })
   );
-  proj.position.copy(player.position).add(new THREE.Vector3(0, 1.5, 0)).add(dir.clone().multiplyScalar(1.2));
-  proj.userData = { 
-    vel: dir.multiplyScalar(18), 
-    life: 2.5, 
-    damage: w.damage,
-    type: state.weapon
-  };
+  proj.position.copy(player.position).add(new THREE.Vector3(0, 1.6, 0)).add(forward.clone().multiplyScalar(1.4));
+  proj.userData = { vel: forward.multiplyScalar(20), life: 2.2, type: state.weapon };
   scene.add(proj);
   projectiles.push(proj);
-  
-  addMessage(state.weapon === 0 ? 'Łup! Oszczep poleciał!' : 
-             state.weapon === 1 ? 'Majonezowa chmura nadchodzi!' : 
-             'Koperkowy wybuch za 3... 2...', 'ogorczak');
+
+  const lines = [
+    ['Łup! Oszczep poleciał!', 'Ogórkowy pocisk w drodze!'],
+    ['Majonezowa chmura nadchodzi!', 'Biała śmierć dla dzika!'],
+    ['Koperkowy wybuch za chwilę...', 'Pachnie zwycięstwem!']
+  ];
+  addMessage(lines[state.weapon][Math.floor(Math.random()*2)], 'ogorczak');
 }
 
-// ==================== POOP ====================
+// ==================== KUPA ====================
 function maybePoop(dt) {
   state.poopCooldown -= dt;
-  if (state.poopCooldown <= 0 && Math.random() < 0.0008) {
-    state.poopCooldown = 12 + Math.random() * 15;
+  if (state.poopCooldown <= 0 && Math.random() < 0.0004) {
+    state.poopCooldown = 22 + Math.random() * 20;
     const poop = new THREE.Mesh(
-      new THREE.BoxGeometry(0.35, 0.5, 0.35),
-      new THREE.MeshStandardMaterial({ color: 0x6b8e23 })
+      new THREE.BoxGeometry(0.32, 0.45, 0.32),
+      new THREE.MeshStandardMaterial({ color: 0x6b8e23, roughness: 0.7 })
     );
     poop.position.copy(player.position);
-    poop.position.y = 0.25;
-    poop.position.x += (Math.random()-0.5)*0.8;
-    poop.position.z += (Math.random()-0.5)*0.8;
+    poop.position.y = 0.23;
+    poop.position.x += (Math.random()-0.5) * 0.9;
+    poop.position.z += (Math.random()-0.5) * 0.9;
     scene.add(poop);
     addMessage('Ups... zrobiłem małą kupę-ogórka. Nie patrz.', 'ogorczak');
   }
 }
 
-// ==================== UPDATE LOOP ====================
+// ==================== GŁÓWNA PĘTLA ====================
 const clock = new THREE.Clock();
+const camOffset = new THREE.Vector3();
+const idealCamPos = new THREE.Vector3();
+const lookTarget = new THREE.Vector3();
 
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05);
-  
+  const dt = Math.min(clock.getDelta(), 0.04);
+
   if (!state.gameStarted) {
+    // delikatna kamera na starcie
+    camera.position.set(Math.sin(performance.now()*0.0003)*8, 5, 12);
+    camera.lookAt(0, 1.5, 0);
     renderer.render(scene, camera);
     return;
   }
-  
-  // Movement
-  velocity.x -= velocity.x * 8 * dt;
-  velocity.z -= velocity.z * 8 * dt;
-  
-  direction.set(0, 0, 0);
-  if (state.keys['KeyW']) direction.z -= 1;
-  if (state.keys['KeyS']) direction.z += 1;
-  if (state.keys['KeyA']) direction.x -= 1;
-  if (state.keys['KeyD']) direction.x += 1;
-  direction.normalize();
-  
-  if (state.pointerLocked) {
-    // Get camera forward on XZ
-    const forward = new THREE.Vector3();
-    camera.getWorldDirection(forward);
-    forward.y = 0;
-    forward.normalize();
-    const right = new THREE.Vector3().crossVectors(forward, new THREE.Vector3(0,1,0)).normalize();
+
+  // Płynne doganianie kątów kamery
+  state.camYaw += (state.targetCamYaw - state.camYaw) * Math.min(1, 12 * dt);
+  state.camPitch += (state.targetCamPitch - state.camPitch) * Math.min(1, 12 * dt);
+
+  // Ruch gracza
+  velocity.x *= (1 - 10 * dt);
+  velocity.z *= (1 - 10 * dt);
+
+  const input = new THREE.Vector3(0, 0, 0);
+  if (state.keys['KeyW']) input.z -= 1;
+  if (state.keys['KeyS']) input.z += 1;
+  if (state.keys['KeyA']) input.x -= 1;
+  if (state.keys['KeyD']) input.x += 1;
+
+  if (input.lengthSq() > 0) {
+    input.normalize();
+    // kierunek względem kamery (yaw)
+    const sin = Math.sin(state.camYaw);
+    const cos = Math.cos(state.camYaw);
+    const moveX = input.x * cos + input.z * sin;
+    const moveZ = -input.x * sin + input.z * cos;
     
-    const move = new THREE.Vector3();
-    move.addScaledVector(forward, -direction.z);
-    move.addScaledVector(right, direction.x);
-    move.normalize();
+    velocity.x += moveX * 32 * dt;
+    velocity.z += moveZ * 32 * dt;
     
-    velocity.x += move.x * 28 * dt;
-    velocity.z += move.z * 28 * dt;
-    
-    // Rotate player to face movement / camera
-    if (move.lengthSq() > 0.01) {
-      playerYaw = Math.atan2(move.x, move.z);
-    } else {
-      playerYaw = Math.atan2(forward.x, forward.z);
-    }
-    player.rotation.y = playerYaw;
+    // obrót postaci w kierunku ruchu
+    playerYaw = Math.atan2(moveX, moveZ);
+  } else {
+    // gdy stoi – patrzy w kierunku kamery
+    playerYaw = state.camYaw;
   }
-  
+  player.rotation.y = playerYaw;
+
   player.position.x += velocity.x * dt;
   player.position.z += velocity.z * dt;
+  player.position.x = THREE.MathUtils.clamp(player.position.x, -100, 100);
+  player.position.z = THREE.MathUtils.clamp(player.position.z, -100, 100);
+
+  // Kamera trzecioosobowa – stabilna
+  const dist = 7.2;
+  const height = 3.4;
+  camOffset.set(
+    Math.sin(state.camYaw) * dist * Math.cos(state.camPitch),
+    height + Math.sin(state.camPitch) * 3.5,
+    Math.cos(state.camYaw) * dist * Math.cos(state.camPitch)
+  );
+  idealCamPos.copy(player.position).add(camOffset);
   
-  // Keep in bounds
-  player.position.x = THREE.MathUtils.clamp(player.position.x, -95, 95);
-  player.position.z = THREE.MathUtils.clamp(player.position.z, -95, 95);
+  // bardzo płynne śledzenie
+  camera.position.lerp(idealCamPos, 1 - Math.pow(0.0008, dt));
   
-  // Third-person camera
-  const camOffset = new THREE.Vector3(0, 3.2, 6.5);
-  camOffset.applyAxisAngle(new THREE.Vector3(0,1,0), playerYaw);
-  const idealPos = player.position.clone().add(camOffset);
-  camera.position.lerp(idealPos, 1 - Math.pow(0.001, dt));
-  
-  const lookTarget = player.position.clone().add(new THREE.Vector3(0, 1.8, 0));
+  lookTarget.set(player.position.x, player.position.y + 1.7, player.position.z);
   camera.lookAt(lookTarget);
-  
-  // Chickens AI
+
+  // Kury
   chickens.forEach(c => {
     c.userData.timer -= dt;
     if (c.userData.timer <= 0) {
-      c.userData.vx = (Math.random()-0.5)*2.2;
-      c.userData.vz = (Math.random()-0.5)*2.2;
-      c.userData.timer = 1.5 + Math.random()*3;
+      c.userData.vx = (Math.random()-0.5) * 2.4;
+      c.userData.vz = (Math.random()-0.5) * 2.4;
+      c.userData.timer = 1.8 + Math.random() * 3.5;
     }
     c.position.x += c.userData.vx * dt;
     c.position.z += c.userData.vz * dt;
     c.rotation.y = Math.atan2(c.userData.vx, c.userData.vz);
-    // soft bounds
-    if (Math.abs(c.position.x) > 80) c.userData.vx *= -1;
-    if (Math.abs(c.position.z) > 80) c.userData.vz *= -1;
+    if (Math.abs(c.position.x) > 85) c.userData.vx *= -1;
+    if (Math.abs(c.position.z) > 85) c.userData.vz *= -1;
   });
-  
-  // Boar AI
+
+  // Dzik
   const distToPlayer = boar.position.distanceTo(player.position);
-  if (distToPlayer < 28) {
+  if (distToPlayer < 26) {
     boarState = 'chase';
     document.getElementById('status').textContent = 'Status: DZIK NADCHODZI!';
     document.getElementById('status').style.color = '#ff5252';
-  } else if (distToPlayer > 40) {
+  } else if (distToPlayer > 38) {
     boarState = 'patrol';
     document.getElementById('status').textContent = 'Status: spokój';
     document.getElementById('status').style.color = '#a8ff78';
   }
-  
+
   if (boarState === 'chase') {
-    const dir = player.position.clone().sub(boar.position).normalize();
-    boar.position.add(dir.multiplyScalar(7.5 * dt));
+    const dir = player.position.clone().sub(boar.position);
+    dir.y = 0;
+    dir.normalize();
+    boar.position.add(dir.multiplyScalar(8.2 * dt));
     boar.lookAt(player.position.x, boar.position.y, player.position.z);
     
-    if (distToPlayer < 2.2) {
-      state.health = Math.max(0, state.health - 15 * dt);
+    if (distToPlayer < 2.3) {
+      state.health = Math.max(0, state.health - 18 * dt);
       document.getElementById('health').textContent = '❤️ Życie: ' + Math.floor(state.health);
       if (state.health <= 0) {
         addMessage('Auć... dzik mnie dopadł. Ale Piotrek i tak mnie kocha.', 'ogorczak');
         state.health = 100;
+        document.getElementById('health').textContent = '❤️ Życie: 100';
         player.position.set(0, 0, 0);
+        velocity.set(0, 0, 0);
         boar.position.set(-30, 0, -25);
+        boarState = 'patrol';
       }
     }
   } else {
-    // simple patrol
-    if (boar.position.distanceTo(boarTarget) < 2 || Math.random() < 0.005) {
-      boarTarget.set((Math.random()-0.5)*60, 0, (Math.random()-0.5)*60);
+    if (boar.position.distanceTo(boarTarget) < 3 || Math.random() < 0.004) {
+      boarTarget.set((Math.random()-0.5)*70, 0, (Math.random()-0.5)*70);
     }
-    const dir = boarTarget.clone().sub(boar.position).normalize();
-    boar.position.add(dir.multiplyScalar(3 * dt));
+    const dir = boarTarget.clone().sub(boar.position);
+    dir.y = 0;
+    dir.normalize();
+    boar.position.add(dir.multiplyScalar(3.2 * dt));
     boar.lookAt(boarTarget.x, 0, boarTarget.z);
   }
-  
-  // Projectiles
+
+  // Pociski
   for (let i = projectiles.length - 1; i >= 0; i--) {
     const p = projectiles[i];
-    p.position.add(p.userData.vel.clone().multiplyScalar(dt));
+    p.position.addScaledVector(p.userData.vel, dt);
     p.userData.life -= dt;
     
-    // hit boar?
-    if (p.position.distanceTo(boar.position) < 1.8) {
-      // knockback
-      const knock = p.position.clone().sub(boar.position).normalize().multiplyScalar(-4);
+    if (p.position.distanceTo(boar.position) < 1.9) {
+      const knock = p.position.clone().sub(boar.position).normalize().multiplyScalar(-5);
       boar.position.add(knock);
       boarState = 'patrol';
       addMessage('TRAFIONY! Dzik dostał ' + state.weapons[p.userData.type].name + '!', 'ogorczak');
@@ -809,39 +869,39 @@ function animate() {
       projectiles.splice(i, 1);
       continue;
     }
-    
-    if (p.userData.life <= 0 || p.position.y < 0) {
+    if (p.userData.life <= 0 || p.position.y < -1) {
       scene.remove(p);
       projectiles.splice(i, 1);
     }
   }
-  
-  // Mushrooms collect
+
+  // Zbieranie grzybów
   mushrooms.forEach(m => {
     if (m.userData.collected) return;
-    if (player.position.distanceTo(m.position) < 1.6) {
+    if (player.position.distanceTo(m.position) < 1.7) {
       m.userData.collected = true;
       scene.remove(m);
       state.score++;
       document.getElementById('score').textContent = 'Grzyby: ' + state.score;
-      addMessage(['Mniam, grzybek!', 'Kolejny punkt dla nas!', 'Piotrek będzie dumny.', 'Grzybowa potęga!'][Math.floor(Math.random()*4)], 'ogorczak');
+      const lines = ['Mniam, grzybek!', 'Kolejny punkt!', 'Piotrek będzie dumny.', 'Grzybowa potęga!'];
+      addMessage(lines[Math.floor(Math.random()*4)], 'ogorczak');
     }
   });
-  
-  // Random Ogórczak talk
+
+  // Losowe gadanie Ogórczaka – DUŻO rzadziej
   state.ogorczakTalkCooldown -= dt;
-  if (state.ogorczakTalkCooldown <= 0 && Math.random() < 0.0015) {
-    state.ogorczakTalkCooldown = 9 + Math.random() * 12;
+  if (state.ogorczakTalkCooldown <= 0 && Math.random() < 0.0007) {
+    state.ogorczakTalkCooldown = 16 + Math.random() * 18;
     addMessage(ogorczakLines[Math.floor(Math.random() * ogorczakLines.length)], 'ogorczak');
   }
-  
+
   maybePoop(dt);
-  
-  // Piotrek looks at player sometimes
-  if (Math.random() < 0.01) {
+
+  // Piotrek delikatnie patrzy w stronę gracza
+  if (Math.random() < 0.008) {
     piotrek.lookAt(player.position.x, piotrek.position.y, player.position.z);
   }
-  
+
   renderer.render(scene, camera);
 }
 
