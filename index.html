@@ -5,85 +5,81 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ogórczak – Przygody Marcina</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}body{overflow:hidden;background:#0a140a;font-family:system-ui,sans-serif;user-select:none}
+*{margin:0;padding:0;box-sizing:border-box}
+body{overflow:hidden;background:#0a140a;font-family:system-ui,sans-serif;user-select:none}
 #gameCanvas{display:block;width:100vw;height:100vh}
-#ui{position:absolute;inset:0;pointer-events:none;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.9)}
+#ui{position:absolute;inset:0;pointer-events:none;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.9);display:none}
 #ui>*{pointer-events:auto}
-#hud{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.72);padding:12px 16px;border-radius:14px;backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);min-width:220px;font-size:13px}
+#hud{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.75);padding:12px 16px;border-radius:14px;min-width:210px;font-size:13px}
 #hud div{margin:3px 0}#score{font-size:18px;font-weight:700;color:#a8ff78}
-#questBox{margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.12);font-size:12px;line-height:1.4}
-#questBox .qtitle{color:#ffd54f;font-weight:600;margin-bottom:3px}
-#weaponInfo{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.72);padding:10px 14px;border-radius:12px;backdrop-filter:blur(12px);text-align:right;font-size:13px}
-#boarHP{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.78);padding:7px 18px;border-radius:10px;display:none;font-size:13px;border:1px solid #e53935}
-#boarHPBar{height:7px;background:#333;border-radius:4px;margin-top:5px;width:170px;overflow:hidden}
+#questBox{margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.15);font-size:12px}
+#questBox .qtitle{color:#ffd54f;font-weight:600}
+#weaponInfo{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.75);padding:10px 14px;border-radius:12px;text-align:right;font-size:13px}
+#boarHP{position:absolute;top:70px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.8);padding:8px 18px;border-radius:10px;display:none;font-size:13px;border:1px solid #e53935}
+#boarHPBar{height:8px;background:#333;border-radius:4px;margin-top:5px;width:160px;overflow:hidden}
 #boarHPFill{height:100%;background:linear-gradient(90deg,#e53935,#ff8a80);width:100%;transition:width .2s}
-#messages{position:absolute;bottom:200px;left:12px;max-width:480px;display:flex;flex-direction:column;gap:8px}
-.msg{background:rgba(0,0,0,.82);padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.4;animation:fadeIn .35s ease;border-left:4px solid #7cfc00}
+#messages{position:absolute;bottom:195px;left:12px;max-width:460px;display:flex;flex-direction:column;gap:8px}
+.msg{background:rgba(0,0,0,.82);padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.4;border-left:4px solid #7cfc00;animation:fi .3s ease}
 .msg.piotrek{border-left-color:#ff69b4}.msg.system{border-left-color:#64b5f6}.msg.quest{border-left-color:#ffd54f}.msg.lucyfer{border-left-color:#ce93d8}
-.msg .author{font-weight:700;margin-bottom:2px;font-size:11px;opacity:.85}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-#chatBox{position:absolute;bottom:12px;left:12px;width:380px;background:rgba(0,0,0,.8);border-radius:14px;padding:12px;backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.1)}
+.msg .author{font-weight:700;font-size:11px;opacity:.85;margin-bottom:2px}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#chatBox{position:absolute;bottom:12px;left:12px;width:370px;background:rgba(0,0,0,.8);border-radius:14px;padding:12px}
 #chatBox label{display:block;font-size:11px;margin-bottom:6px;opacity:.7}
-#chatInput{width:100%;padding:9px 12px;border:none;border-radius:8px;background:rgba(255,255,255,.1);color:#fff;font-size:13px;outline:none}
-#chatInput::placeholder{color:rgba(255,255,255,.4)}
-#chatButtons{display:flex;gap:7px;margin-top:8px}
+#chatInput{width:100%;padding:9px 12px;border:none;border-radius:8px;background:rgba(255,255,255,.12);color:#fff;font-size:13px;outline:none}
+#chatButtons{display:flex;gap:6px;margin-top:8px}
 #chatButtons button{flex:1;padding:7px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:12px}
-#btnPiotrek{background:#ff69b4;color:#111}#btnPiotrek:hover{background:#ff85c2}
-#btnChat{background:#4fc3f7;color:#111}#btnChat:hover{background:#81d4fa}
-#btnLucy{background:#ce93d8;color:#111}#btnLucy:hover{background:#e1bee7}
-#controls{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.65);padding:10px 14px;border-radius:12px;font-size:11px;line-height:1.55;backdrop-filter:blur(10px)}
-#weaponBar{position:absolute;bottom:105px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
-.weaponSlot{width:58px;height:58px;background:rgba(0,0,0,.7);border-radius:12px;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer}
-.weaponSlot.active{border-color:#7cfc00;background:rgba(124,252,0,.2);box-shadow:0 0 12px rgba(124,252,0,.3)}
+#btnPiotrek{background:#ff69b4;color:#111}#btnLucy{background:#ce93d8;color:#111}#btnChat{background:#4fc3f7;color:#111}
+#controls{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.65);padding:10px 14px;border-radius:12px;font-size:11px;line-height:1.55}
+#weaponBar{position:absolute;bottom:100px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.weaponSlot{width:56px;height:56px;background:rgba(0,0,0,.7);border-radius:12px;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer}
+.weaponSlot.active{border-color:#7cfc00;background:rgba(124,252,0,.2)}
 #startScreen{position:absolute;inset:0;background:linear-gradient(165deg,#081208,#142414 45%,#0a160a);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;color:#fff;text-align:center}
-#startScreen h1{font-size:48px;margin-bottom:8px;color:#a8ff78;text-shadow:0 0 28px rgba(168,255,120,.4)}
-#startScreen p{max-width:540px;margin:8px 0;opacity:.88;line-height:1.5;font-size:14px}
-#startScreen button{margin-top:24px;padding:13px 42px;font-size:17px;font-weight:700;border:none;border-radius:12px;background:#7cfc00;color:#111;cursor:pointer;box-shadow:0 6px 22px rgba(124,252,0,.35)}
-#startScreen button:hover{transform:scale(1.04);background:#b4ff8a}
-#clickHint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);padding:12px 24px;border-radius:12px;font-size:14px;pointer-events:none;display:none;z-index:50}
-#crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;pointer-events:none;display:none}
+#startScreen h1{font-size:48px;margin-bottom:8px;color:#a8ff78;text-shadow:0 0 24px rgba(168,255,120,.4)}
+#startScreen p{max-width:520px;margin:8px 0;opacity:.9;line-height:1.5;font-size:14px}
+#startBtn{margin-top:22px;padding:14px 44px;font-size:18px;font-weight:700;border:none;border-radius:12px;background:#7cfc00;color:#111;cursor:pointer;box-shadow:0 6px 22px rgba(124,252,0,.35)}
+#startBtn:hover{background:#b4ff8a;transform:scale(1.03)}
+#loadError{color:#ff8a80;margin-top:14px;font-size:13px;max-width:400px;display:none}
+#clickHint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.8);padding:12px 22px;border-radius:12px;font-size:14px;display:none;z-index:50;pointer-events:none}
+#crosshair{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:16px;height:16px;display:none;pointer-events:none}
 #crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(255,255,255,.85)}
-#crosshair::before{width:2px;height:16px;left:7px;top:0}#crosshair::after{width:16px;height:2px;left:0;top:7px}
-#petHint{position:absolute;top:45%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);padding:8px 16px;border-radius:10px;font-size:13px;display:none;pointer-events:none;z-index:40}
+#crosshair::before{width:2px;height:16px;left:7px}#crosshair::after{width:16px;height:2px;top:7px}
+#petHint{position:absolute;top:44%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,.75);padding:8px 16px;border-radius:10px;font-size:13px;display:none;pointer-events:none;z-index:40}
 </style>
 </head>
 <body>
 <div id="startScreen">
   <h1>🥒 Ogórczak</h1>
-  <p>Marcin, witaj w żywym świecie pełnym konsekwencji.<br>
-  Piotrek żyje swoim życiem. Lucyfer poluje. Grzyby bywają trujące.<br>
-  Każda akcja ma skutki. Głaszcz mądrze.</p>
-  <p style="font-size:12px;opacity:.55">WASD • Mysz • LPM/Spacja strzał • F głaskanie • 1-3 broń • E Piotrek • czat: „Lucyfer”</p>
-  <button id="startBtn" type="button" onclick="window.__startGame && window.__startGame()">Wejdź do gry</button>
-  <p id="loadError" style="display:none;color:#ff8a80;margin-top:16px;max-width:420px;font-size:13px;"></p>
+  <p>Marcin, witaj w żywym świecie.<br>
+  Piotrek chodzi. Lucyfer (czarny kot) poluje. Grzyby bywają trujące.<br>
+  Głaszcz kury (F). Zawołaj Lucyfera w czacie.</p>
+  <p style="font-size:12px;opacity:.55">WASD • Mysz • LPM/Spacja • F głaskanie • 1-3 broń • E Piotrek</p>
+  <button id="startBtn" type="button">Wejdź do gry</button>
+  <p id="loadError"></p>
 </div>
-<div id="clickHint">Kliknij, żeby przejąć mysz</div>
+<div id="clickHint">Kliknij w grę, żeby przejąć mysz</div>
 <div id="crosshair"></div>
 <div id="petHint">F – pogłaszcz</div>
 <canvas id="gameCanvas"></canvas>
-<div id="ui" style="display:none">
+<div id="ui">
   <div id="hud">
     <div id="score">Grzyby: 0 (jadalne)</div>
-    <div id="poison">Trujące zjedzone: 0</div>
-    <div id="kills">Dziki pokonane: 0</div>
+    <div id="poison">Trujące: 0</div>
+    <div id="kills">Dziki: 0</div>
     <div id="health">❤️ Życie: 100</div>
-    <div id="mood">Nastrój świata: spokój</div>
+    <div id="mood">Nastrój: spokój</div>
     <div id="status">Status: spokój</div>
     <div id="questBox"><div class="qtitle">🎯 Wyzwanie</div><div id="questText">Zbierz 6 jadalnych grzybów</div></div>
   </div>
-  <div id="weaponInfo">
-    <div id="currentWeapon">Broń: Oszczep z ogórka</div>
-    <div style="font-size:11px;opacity:.6;margin-top:2px">1 / 2 / 3</div>
-  </div>
+  <div id="weaponInfo"><div id="currentWeapon">Broń: Oszczep z ogórka</div></div>
   <div id="boarHP"><div>🐗 Dziki dzik</div><div id="boarHPBar"><div id="boarHPFill"></div></div></div>
   <div id="messages"></div>
   <div id="chatBox">
-    <label>Czat / wołanie (napisz „Lucyfer” żeby zawołać kota):</label>
-    <input id="chatInput" type="text" placeholder="Do Piotrka lub „Lucyfer”..." maxlength="140" autocomplete="off">
+    <label>Czat (napisz „Lucyfer” żeby zawołać kota):</label>
+    <input id="chatInput" type="text" placeholder="Do Piotrka lub Lucyfer..." maxlength="140" autocomplete="off">
     <div id="chatButtons">
-      <button id="btnPiotrek">Do Piotrka</button>
-      <button id="btnLucy">Zawołaj Lucyfera</button>
-      <button id="btnChat">Czat</button>
+      <button id="btnPiotrek" type="button">Do Piotrka</button>
+      <button id="btnLucy" type="button">Lucyfer</button>
+      <button id="btnChat" type="button">Czat</button>
     </div>
   </div>
   <div id="weaponBar">
@@ -91,776 +87,711 @@
     <div class="weaponSlot" data-w="1">🥄</div>
     <div class="weaponSlot" data-w="2">🌿</div>
   </div>
-  <div id="controls">
-    WASD – ruch<br>Mysz – kamera<br>LPM / Spacja – strzał<br>F – głaskanie<br>1 2 3 – broń<br>E – Piotrek<br>Esc – mysz
-  </div>
+  <div id="controls">WASD – ruch<br>Mysz – kamera<br>LPM/Spacja – strzał<br>F – głaskanie<br>1 2 3 – broń<br>E – Piotrek<br>Esc – mysz</div>
 </div>
-<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
 <script>
-(function() {
+(function(){
 'use strict';
-if (typeof THREE === 'undefined') {
-  var errEl = document.getElementById('loadError');
-  if (errEl) {
-    errEl.style.display = 'block';
-    errEl.textContent = 'Three.js nie załadowany. Sprawdź internet i odśwież stronę (Ctrl+F5).';
+
+var errEl = document.getElementById('loadError');
+function showErr(msg){
+  errEl.style.display = 'block';
+  errEl.textContent = msg;
+  console.error(msg);
+}
+
+// Przycisk działa ZAWSZE – nawet przed Three.js
+function doStart(){
+  try {
+    if (typeof THREE === 'undefined') {
+      showErr('Three.js jeszcze się ładuje. Poczekaj sekundę i kliknij ponownie (albo Ctrl+Shift+R).');
+      return;
+    }
+    if (!window.__gameReady) {
+      showErr('Gra jeszcze się inicjalizuje… spróbuj za chwilę.');
+      return;
+    }
+    document.getElementById('startScreen').style.display = 'none';
+    document.getElementById('ui').style.display = 'block';
+    window.__onGameStart();
+  } catch(e) {
+    showErr('Błąd startu: ' + (e.message || e));
   }
+}
+document.getElementById('startBtn').onclick = doStart;
+window.__startGame = doStart;
+
+if (typeof THREE === 'undefined') {
+  showErr('Nie załadowano Three.js. Sprawdź internet i odśwież (Ctrl+Shift+R).');
   return;
 }
 
-const state = {
-  score: 0, poisonEaten: 0, kills: 0, health: 100, weapon: 0,
-  weapons: [
-    { name: 'Oszczep z ogórka', damage: 34, cooldown: 0.5, color: 0x7cfc00 },
-    { name: 'Majonezowa bomba', damage: 55, cooldown: 1.0, color: 0xfff8e1 },
-    { name: 'Koperkowy granat', damage: 45, cooldown: 0.85, color: 0x66bb6a }
+// ===== STATE =====
+var state = {
+  score:0, poison:0, kills:0, health:100, weapon:0,
+  weapons:[
+    {name:'Oszczep z ogórka', damage:34, cd:0.5, color:0x7cfc00},
+    {name:'Majonezowa bomba', damage:55, cd:1.0, color:0xfff8e1},
+    {name:'Koperkowy granat', damage:45, cd:0.85, color:0x66bb6a}
   ],
-  lastAttack: 0, keys: {}, gameStarted: false, pointerCaptured: false,
-  talkCooldown: 12, poopCooldown: 22,
-  camYaw: 0, camPitch: 0.3, targetCamYaw: 0, targetCamPitch: 0.3,
-  questIndex: 0, questProgress: 0,
-  worldMood: 50,
-  chickensPet: 0,
-  storyFlags: { firstPoison: false, firstKill: false, firstPet: false, metLucy: false }
+  lastAtk:0, keys:{}, started:false, locked:false,
+  talkCD:12, poopCD:22,
+  yaw:0, pitch:0.3, tYaw:0, tPitch:0.3,
+  quest:0, qProg:0, mood:50, pets:0,
+  flags:{poison:false, kill:false, pet:false, lucy:false}
 };
-
-const quests = [
-  { text: 'Zbierz 6 jadalnych grzybów', type: 'mushrooms', target: 6 },
-  { text: 'Pokonaj dzikiego dzika', type: 'kill', target: 1 },
-  { text: 'Pogłaszcz 3 kury (F gdy blisko)', type: 'pet', target: 3 },
-  { text: 'Porozmawiaj z Piotrkiem', type: 'talk', target: 1 },
-  { text: 'Zawołaj Lucyfera po imieniu', type: 'lucy', target: 1 },
-  { text: 'Zbierz 12 jadalnych grzybów', type: 'mushrooms', target: 12 },
-  { text: 'Pokonaj 2 dziki', type: 'kill', target: 2 }
+var quests = [
+  {t:'Zbierz 6 jadalnych grzybów', type:'mush', n:6},
+  {t:'Pokonaj dzikiego dzika', type:'kill', n:1},
+  {t:'Pogłaszcz 3 kury (F)', type:'pet', n:3},
+  {t:'Porozmawiaj z Piotrkiem', type:'talk', n:1},
+  {t:'Zawołaj Lucyfera', type:'lucy', n:1},
+  {t:'Zbierz 12 jadalnych grzybów', type:'mush', n:12},
+  {t:'Pokonaj 2 dziki', type:'kill', n:2}
 ];
+var WORLD = 280;
 
-const WORLD = 320;
+// ===== THREE SETUP =====
+var canvas = document.getElementById('gameCanvas');
+var renderer, scene, camera;
+try {
+  renderer = new THREE.WebGLRenderer({canvas:canvas, antialias:true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  if (THREE.PCFSoftShadowMap) renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  if (THREE.ACESFilmicToneMapping) renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
 
-const canvas = document.getElementById('gameCanvas');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
-if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
-else if (renderer.outputEncoding !== undefined) renderer.outputEncoding = THREE.sRGBEncoding;
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x7eb8d4);
+  scene.fog = new THREE.FogExp2(0x7eb8d4, 0.008);
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x7eb8d4);
-scene.fog = new THREE.FogExp2(0x7eb8d4, 0.0075);
-const camera = new THREE.PerspectiveCamera(58, window.innerWidth / window.innerHeight, 0.1, 400);
+  camera = new THREE.PerspectiveCamera(58, window.innerWidth/window.innerHeight, 0.1, 350);
 
-scene.add(new THREE.HemisphereLight(0xb8d4ff, 0x3d6b2e, 0.45));
-const sun = new THREE.DirectionalLight(0xfff1d0, 1.25);
-sun.position.set(60, 80, 40);
-sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048);
-sun.shadow.camera.near = 5; sun.shadow.camera.far = 220;
-sun.shadow.camera.left = -90; sun.shadow.camera.right = 90;
-sun.shadow.camera.top = 90; sun.shadow.camera.bottom = -90;
-sun.shadow.bias = -0.0002;
-scene.add(sun);
-const fill = new THREE.DirectionalLight(0x88aacc, 0.2);
-fill.position.set(-40, 20, -50); scene.add(fill);
-
-const ground = new THREE.Mesh(new THREE.PlaneGeometry(WORLD, WORLD, 64, 64), new THREE.MeshStandardMaterial({ color: 0x4a8c3c, roughness: 0.93, metalness: 0.02 }));
-ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
-
-const grassMat = new THREE.MeshStandardMaterial({ color: 0x3a9b38, roughness: 0.8 });
-for (let i = 0; i < 280; i++) {
-  const h = 0.25 + Math.random() * 0.55;
-  const g = new THREE.Mesh(new THREE.ConeGeometry(0.06 + Math.random()*0.05, h, 4), grassMat);
-  g.position.set((Math.random()-0.5)*WORLD*0.95, h/2, (Math.random()-0.5)*WORLD*0.95);
-  g.rotation.y = Math.random()*6; g.castShadow = true; scene.add(g);
+  scene.add(new THREE.HemisphereLight(0xb8d4ff, 0x3d6b2e, 0.5));
+  var sun = new THREE.DirectionalLight(0xfff1d0, 1.2);
+  sun.position.set(50, 70, 35);
+  sun.castShadow = true;
+  sun.shadow.mapSize.set(1024, 1024);
+  scene.add(sun);
+} catch(e) {
+  showErr('Błąd WebGL: ' + e.message);
+  return;
 }
 
-const rockMat = new THREE.MeshStandardMaterial({ color: 0x6a6a6a, roughness: 0.92 });
-for (let i = 0; i < 55; i++) {
-  const s = 0.35 + Math.random()*1.4;
-  const r = new THREE.Mesh(new THREE.DodecahedronGeometry(s, 0), rockMat);
-  r.position.set((Math.random()-0.5)*WORLD*0.9, s*0.35, (Math.random()-0.5)*WORLD*0.9);
-  r.rotation.set(Math.random(), Math.random(), Math.random());
-  r.castShadow = true; r.receiveShadow = true; scene.add(r);
-}
+// Ground
+var ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(WORLD, WORLD),
+  new THREE.MeshStandardMaterial({color:0x4a8c3c, roughness:0.92})
+);
+ground.rotation.x = -Math.PI/2;
+ground.receiveShadow = true;
+scene.add(ground);
 
-const fCols = [0xffeb3b,0xe91e63,0x9c27b0,0xffffff,0xff9800,0x2196f3];
-for (let i = 0; i < 90; i++) {
-  const f = new THREE.Group();
-  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.025,0.035,0.4,4), new THREE.MeshStandardMaterial({color:0x4caf50}));
-  stem.position.y = 0.2; f.add(stem);
-  const pet = new THREE.Mesh(new THREE.SphereGeometry(0.1,6,5), new THREE.MeshStandardMaterial({color:fCols[i%fCols.length]}));
-  pet.position.y = 0.42; f.add(pet);
-  f.position.set((Math.random()-0.5)*WORLD*0.85, 0, (Math.random()-0.5)*WORLD*0.85); scene.add(f);
+// Light world decoration
+var grassM = new THREE.MeshStandardMaterial({color:0x3a9b38});
+for (var i=0;i<100;i++){
+  var h=0.3+Math.random()*0.45;
+  var g=new THREE.Mesh(new THREE.ConeGeometry(0.07,h,4), grassM);
+  g.position.set((Math.random()-0.5)*WORLD*0.9, h/2, (Math.random()-0.5)*WORLD*0.9);
+  scene.add(g);
 }
-
-function makeTree(x, z, scale=1) {
-  const g = new THREE.Group();
-  const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.28*scale,0.4*scale,2.6*scale,7), new THREE.MeshStandardMaterial({color:0x5c4033,roughness:0.9}));
-  trunk.position.y = 1.3*scale; trunk.castShadow = true; g.add(trunk);
-  const lm = new THREE.MeshStandardMaterial({color: 0x2d7a30, roughness:0.82});
-  [[0,3.3,0,1.8],[0.6,2.9,0.4,1.25],[-0.55,3.0,-0.3,1.2],[0.15,3.8,-0.15,1.05]].forEach(([lx,ly,lz,s]) => {
-    const leaf = new THREE.Mesh(new THREE.IcosahedronGeometry(s*scale,0), lm);
-    leaf.position.set(lx*scale,ly*scale,lz*scale); leaf.castShadow = true; g.add(leaf);
-  });
-  g.position.set(x,0,z); scene.add(g);
+var rockM = new THREE.MeshStandardMaterial({color:0x6a6a6a, roughness:0.9});
+for (var i=0;i<25;i++){
+  var s=0.4+Math.random()*1.1;
+  var r=new THREE.Mesh(new THREE.DodecahedronGeometry(s,0), rockM);
+  r.position.set((Math.random()-0.5)*WORLD*0.85, s*0.35, (Math.random()-0.5)*WORLD*0.85);
+  r.castShadow=true; scene.add(r);
 }
-for (let i = 0; i < 55; i++) {
-  const a = Math.random()*Math.PI*2, r = 25 + Math.random()*(WORLD*0.4);
-  makeTree(Math.cos(a)*r, Math.sin(a)*r, 0.85 + Math.random()*0.4);
+function makeTree(x,z){
+  var gr=new THREE.Group();
+  var tr=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.38,2.4,6), new THREE.MeshStandardMaterial({color:0x5c4033}));
+  tr.position.y=1.2; tr.castShadow=true; gr.add(tr);
+  var lf=new THREE.Mesh(new THREE.IcosahedronGeometry(1.6,0), new THREE.MeshStandardMaterial({color:0x2e7d32}));
+  lf.position.y=3.1; lf.castShadow=true; gr.add(lf);
+  gr.position.set(x,0,z); scene.add(gr);
 }
-
-const woodMat = new THREE.MeshStandardMaterial({color:0x8d6e63,roughness:0.88});
-for (let i = 0; i < 12; i++) {
-  const fx=(Math.random()-0.5)*WORLD*0.7, fz=(Math.random()-0.5)*WORLD*0.7;
-  for (let j=0;j<5;j++) {
-    const post = new THREE.Mesh(new THREE.BoxGeometry(0.14,1.15,0.14), woodMat);
-    post.position.set(fx+j*1.15,0.57,fz); post.castShadow=true; scene.add(post);
-  }
-  const rail = new THREE.Mesh(new THREE.BoxGeometry(5.5,0.1,0.1), woodMat);
-  rail.position.set(fx+2.3,0.75,fz); scene.add(rail);
+for (var i=0;i<28;i++){
+  var a=Math.random()*Math.PI*2, rr=22+Math.random()*90;
+  makeTree(Math.cos(a)*rr, Math.sin(a)*rr);
 }
-const bushMat = new THREE.MeshStandardMaterial({color:0x2e7d32,roughness:0.85});
-for (let i = 0; i < 40; i++) {
-  const b = new THREE.Mesh(new THREE.IcosahedronGeometry(0.7+Math.random()*0.6,0), bushMat);
-  b.position.set((Math.random()-0.5)*WORLD*0.85, 0.5, (Math.random()-0.5)*WORLD*0.85);
-  b.castShadow = true; scene.add(b);
-}
-for (let i = 0; i < 15; i++) {
-  const log = new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.22,1.8+Math.random(),6), woodMat);
-  log.rotation.z = Math.PI/2; log.rotation.y = Math.random()*Math.PI;
-  log.position.set((Math.random()-0.5)*WORLD*0.8, 0.2, (Math.random()-0.5)*WORLD*0.8);
-  log.castShadow = true; scene.add(log);
-}
-[[-25,30,7],[40,-35,5],[-50,-40,4]].forEach(([x,z,r]) => {
-  const pond = new THREE.Mesh(new THREE.CircleGeometry(r,20), new THREE.MeshStandardMaterial({color:0x4fc3f7,roughness:0.12,metalness:0.35,transparent:true,opacity:0.82}));
-  pond.rotation.x = -Math.PI/2; pond.position.set(x,0.04,z); scene.add(pond);
+[[-22,28,6],[38,-30,5]].forEach(function(p){
+  var pond=new THREE.Mesh(new THREE.CircleGeometry(p[2],16), new THREE.MeshStandardMaterial({color:0x4fc3f7, roughness:0.15, metalness:0.3, transparent:true, opacity:0.85}));
+  pond.rotation.x=-Math.PI/2; pond.position.set(p[0],0.04,p[1]); scene.add(pond);
 });
 
-// OGÓRCZAK kwadratowy
-const player = new THREE.Group(); player.position.set(0,0,0);
-const green=0x5a8f3a, greenDark=0x3d6b28;
-const body = new THREE.Mesh(new THREE.BoxGeometry(1.15,2.9,1.15), new THREE.MeshStandardMaterial({color:green,roughness:0.72}));
+// ===== OGÓRCZAK (kwadratowy) =====
+var player = new THREE.Group();
+player.position.set(0,0,0);
+var green=0x5a8f3a, gDark=0x3d6b28;
+var body=new THREE.Mesh(new THREE.BoxGeometry(1.15,2.9,1.15), new THREE.MeshStandardMaterial({color:green, roughness:0.72}));
 body.position.y=1.45; body.castShadow=true; player.add(body);
-const pMat = new THREE.MeshStandardMaterial({color:greenDark,roughness:0.75});
-[[-0.38,0.4,0.58],[0.35,-0.3,0.58],[-0.25,1.0,0.58],[0.3,1.55,0.58],[-0.15,-0.7,0.58],[0.2,0.6,0.58],[-0.35,-1.0,0.58],[0.1,-1.2,0.58]].forEach(([x,y,z])=>{
-  const p=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.38,0.06),pMat); p.position.set(x,y+1.45,z); player.add(p);
+var pMat=new THREE.MeshStandardMaterial({color:gDark});
+[[-0.38,0.4,0.58],[0.35,-0.3,0.58],[-0.25,1.0,0.58],[0.3,1.55,0.58],[-0.15,-0.7,0.58],[0.2,0.6,0.58]].forEach(function(v){
+  var p=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.38,0.06), pMat); p.position.set(v[0],v[1]+1.45,v[2]); player.add(p);
 });
-const eyeMat=new THREE.MeshStandardMaterial({color:0x111111});
-player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.3,0.24,0.12),eyeMat),{position:new THREE.Vector3(-0.3,2.4,0.58)}));
-player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.3,0.24,0.12),eyeMat),{position:new THREE.Vector3(0.3,2.4,0.58)}));
-const beakTop=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.38,0.72),new THREE.MeshStandardMaterial({color:0xd4a017,roughness:0.5}));
-beakTop.position.set(0,2.05,0.9); player.add(beakTop);
-const beakBot=new THREE.Mesh(new THREE.BoxGeometry(0.95,0.3,0.58),new THREE.MeshStandardMaterial({color:0xb8860b,roughness:0.55}));
-beakBot.position.set(0,1.75,0.82); player.add(beakBot);
-const tongue=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.55,0.12),new THREE.MeshStandardMaterial({color:0xe53935,roughness:0.45}));
+var eMat=new THREE.MeshStandardMaterial({color:0x111111});
+player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.3,0.24,0.12),eMat),{position:new THREE.Vector3(-0.3,2.4,0.58)}));
+player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.3,0.24,0.12),eMat),{position:new THREE.Vector3(0.3,2.4,0.58)}));
+var beak1=new THREE.Mesh(new THREE.BoxGeometry(1.0,0.38,0.72), new THREE.MeshStandardMaterial({color:0xd4a017}));
+beak1.position.set(0,2.05,0.9); player.add(beak1);
+var beak2=new THREE.Mesh(new THREE.BoxGeometry(0.95,0.3,0.58), new THREE.MeshStandardMaterial({color:0xb8860b}));
+beak2.position.set(0,1.75,0.82); player.add(beak2);
+var tongue=new THREE.Mesh(new THREE.BoxGeometry(0.38,0.55,0.12), new THREE.MeshStandardMaterial({color:0xe53935}));
 tongue.position.set(0,1.42,0.98); player.add(tongue);
-const sproutMat=new THREE.MeshStandardMaterial({color:0x98fb98,roughness:0.4,transparent:true,opacity:0.9});
-player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.14,0.75,0.14),sproutMat),{position:new THREE.Vector3(-0.12,3.25,0)}));
-player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.14,0.55,0.14),sproutMat),{position:new THREE.Vector3(0.12,3.15,0.05)}));
+var spM=new THREE.MeshStandardMaterial({color:0x98fb98, transparent:true, opacity:0.9});
+player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.14,0.75,0.14),spM),{position:new THREE.Vector3(-0.12,3.25,0)}));
+player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.14,0.55,0.14),spM),{position:new THREE.Vector3(0.12,3.15,0.05)}));
 scene.add(player);
-const velocity=new THREE.Vector3(); let playerYaw=0;
+var velocity=new THREE.Vector3();
+var playerYaw=0;
 
-// PIOTREK żyjący swoim życiem
-const piotrek = new THREE.Group();
-piotrek.position.set(14,0,-8);
-piotrek.userData = { state: 'idle', timer: 3, target: new THREE.Vector3(14,0,-8), mood: 70 };
-const pBodyMat = new THREE.MeshStandardMaterial({color:0x1c1c1c,roughness:0.65});
-const pTorso = new THREE.Mesh(new THREE.CapsuleGeometry(0.38,1.05,6,12), pBodyMat);
-pTorso.position.y=1.4; pTorso.castShadow=true; piotrek.add(pTorso);
-[-0.52,0.52].forEach((x,i)=>{
-  const arm=new THREE.Mesh(new THREE.CapsuleGeometry(0.1,0.6,4,8),pBodyMat);
-  arm.position.set(x,1.5,0); arm.rotation.z=(i===0?0.15:-0.15); arm.castShadow=true; piotrek.add(arm);
+// ===== PIOTREK =====
+var piotrek=new THREE.Group();
+piotrek.position.set(12,0,-7);
+piotrek.userData={st:'idle', timer:3, target:new THREE.Vector3(12,0,-7)};
+var pBody=new THREE.Mesh(new THREE.CapsuleGeometry(0.38,1.05,5,10), new THREE.MeshStandardMaterial({color:0x1c1c1c}));
+pBody.position.y=1.4; pBody.castShadow=true; piotrek.add(pBody);
+[-0.5,0.5].forEach(function(x){
+  var arm=new THREE.Mesh(new THREE.CapsuleGeometry(0.1,0.55,4,6), new THREE.MeshStandardMaterial({color:0x1c1c1c}));
+  arm.position.set(x,1.48,0); piotrek.add(arm);
 });
-const skinMat = new THREE.MeshStandardMaterial({color:0xf0c8a0,roughness:0.5});
-const pHead = new THREE.Mesh(new THREE.SphereGeometry(0.34,16,14), skinMat);
-pHead.position.y=2.32; pHead.castShadow=true; piotrek.add(pHead);
-const hairM = new THREE.MeshStandardMaterial({color:0x5a3820,roughness:0.88});
-const hair = new THREE.Mesh(new THREE.SphereGeometry(0.37,12,10), hairM);
-hair.position.y=2.45; hair.scale.set(1.08,0.82,1.08); piotrek.add(hair);
-[[-0.16,2.62,0.2],[0.14,2.68,0.18],[0.02,2.75,0.04],[-0.22,2.52,-0.12],[0.2,2.55,-0.08],[-0.08,2.7,0.12]].forEach(([x,y,z])=>{
-  const s=new THREE.Mesh(new THREE.SphereGeometry(0.1+Math.random()*0.05,6,5),hairM); s.position.set(x,y,z); piotrek.add(s);
+var pHead=new THREE.Mesh(new THREE.SphereGeometry(0.34,14,12), new THREE.MeshStandardMaterial({color:0xf0c8a0, roughness:0.5}));
+pHead.position.y=2.3; pHead.castShadow=true; piotrek.add(pHead);
+var hairM=new THREE.MeshStandardMaterial({color:0x5a3820});
+var hair=new THREE.Mesh(new THREE.SphereGeometry(0.37,10,8), hairM);
+hair.position.y=2.42; hair.scale.set(1.08,0.82,1.08); piotrek.add(hair);
+[[-0.15,2.6,0.2],[0.14,2.65,0.18],[0,2.72,0.05],[-0.2,2.5,-0.1],[0.18,2.52,-0.08]].forEach(function(v){
+  var s=new THREE.Mesh(new THREE.SphereGeometry(0.1,5,4), hairM); s.position.set(v[0],v[1],v[2]); piotrek.add(s);
 });
-const eyeM = new THREE.MeshStandardMaterial({color:0x2a2a2a});
-piotrek.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.045,8,6),eyeM),{position:new THREE.Vector3(-0.11,2.35,0.3)}));
-piotrek.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.045,8,6),eyeM),{position:new THREE.Vector3(0.11,2.35,0.3)}));
-const nose=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.1,5),new THREE.MeshStandardMaterial({color:0xe0b090}));
-nose.rotation.x=Math.PI/2; nose.position.set(0,2.25,0.33); piotrek.add(nose);
-const mouth=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.03,0.03),new THREE.MeshStandardMaterial({color:0xb06060}));
-mouth.position.set(0,2.12,0.31); piotrek.add(mouth);
-[-0.18,0.18].forEach(x=>{
-  const leg=new THREE.Mesh(new THREE.CapsuleGeometry(0.12,0.75,4,8),new THREE.MeshStandardMaterial({color:0x222222}));
-  leg.position.set(x,0.48,0); leg.castShadow=true; piotrek.add(leg);
+var eyeM=new THREE.MeshStandardMaterial({color:0x2a2a2a});
+piotrek.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.045,6,5),eyeM),{position:new THREE.Vector3(-0.11,2.33,0.3)}));
+piotrek.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.045,8,6),eyeM),{position:new THREE.Vector3(0.11,2.33,0.3)}));
+var nose=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.1,5), new THREE.MeshStandardMaterial({color:0xe0b090}));
+nose.rotation.x=Math.PI/2; nose.position.set(0,2.23,0.33); piotrek.add(nose);
+var mouth=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.03,0.03), new THREE.MeshStandardMaterial({color:0xb06060}));
+mouth.position.set(0,2.1,0.31); piotrek.add(mouth);
+[-0.17,0.17].forEach(function(x){
+  var leg=new THREE.Mesh(new THREE.CapsuleGeometry(0.12,0.7,4,6), new THREE.MeshStandardMaterial({color:0x222222}));
+  leg.position.set(x,0.48,0); piotrek.add(leg);
 });
 scene.add(piotrek);
-const nc=document.createElement('canvas'); nc.width=260; nc.height=56;
-const nctx=nc.getContext('2d');
-nctx.fillStyle='rgba(0,0,0,0.65)'; nctx.beginPath(); nctx.roundRect(8,6,244,44,11); nctx.fill();
-nctx.fillStyle='#ff69b4'; nctx.font='bold 24px system-ui'; nctx.textAlign='center'; nctx.fillText('Piotrek ❤️',130,36);
-const ns=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(nc),transparent:true,depthTest:false}));
-ns.scale.set(2.6,0.56,1); ns.position.y=3.05; piotrek.add(ns);
+var nc=document.createElement('canvas'); nc.width=240; nc.height=48;
+var nx=nc.getContext('2d');
+nx.fillStyle='rgba(0,0,0,0.65)';
+if(nx.roundRect){ nx.beginPath(); nx.roundRect(6,5,228,38,10); nx.fill(); }
+else { nx.fillRect(6,5,228,38); }
+nx.fillStyle='#ff69b4'; nx.font='bold 22px system-ui'; nx.textAlign='center'; nx.fillText('Piotrek',120,30);
+var ns=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(nc), transparent:true, depthTest:false}));
+ns.scale.set(2.4,0.5,1); ns.position.y=3.0; piotrek.add(ns);
 
-// LUCYFER
-const lucyfer = new THREE.Group();
-lucyfer.position.set(30,0,20);
-lucyfer.userData = { state: 'wander', timer: 5, target: new THREE.Vector3(30,0,20), petCount: 0, visibleTimer: 0 };
-lucyfer.visible = false;
-// Lucyfer – KONIECZNIE czarny
-const catMat = new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.65});
-const catBody = new THREE.Mesh(new THREE.CapsuleGeometry(0.22,0.45,4,8), catMat);
-catBody.rotation.z = Math.PI/2; catBody.position.y=0.35; catBody.castShadow=true; lucyfer.add(catBody);
-const catHead = new THREE.Mesh(new THREE.SphereGeometry(0.2,10,8), catMat);
-catHead.position.set(0.35,0.42,0); lucyfer.add(catHead);
-[[0.28,0.62,0.1],[0.28,0.62,-0.1]].forEach(([x,y,z])=>{
-  const ear=new THREE.Mesh(new THREE.ConeGeometry(0.07,0.14,4),catMat); ear.position.set(x,y,z); lucyfer.add(ear);
+// ===== LUCYFER – CZARNY =====
+var lucy=new THREE.Group();
+lucy.position.set(25,0,18);
+lucy.userData={st:'wander', timer:5, target:new THREE.Vector3(25,0,18), pets:0, vis:0};
+lucy.visible=false;
+var catM=new THREE.MeshStandardMaterial({color:0x0a0a0a, roughness:0.65});
+var cBody=new THREE.Mesh(new THREE.CapsuleGeometry(0.22,0.45,4,8), catM);
+cBody.rotation.z=Math.PI/2; cBody.position.y=0.35; cBody.castShadow=true; lucy.add(cBody);
+var cHead=new THREE.Mesh(new THREE.SphereGeometry(0.2,10,8), catM);
+cHead.position.set(0.35,0.42,0); lucy.add(cHead);
+[[0.28,0.62,0.1],[0.28,0.62,-0.1]].forEach(function(v){
+  var ear=new THREE.Mesh(new THREE.ConeGeometry(0.07,0.14,4), catM); ear.position.set(v[0],v[1],v[2]); lucy.add(ear);
 });
-const tail=new THREE.Mesh(new THREE.CapsuleGeometry(0.04,0.5,3,6), catMat);
-tail.position.set(-0.45,0.4,0); tail.rotation.z=-0.6; lucyfer.add(tail);
-const catEye=new THREE.MeshStandardMaterial({color:0xffc107, emissive:0x443300, emissiveIntensity:0.25});
-lucyfer.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.04,6,5),catEye),{position:new THREE.Vector3(0.48,0.45,0.08)}));
-lucyfer.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.04,6,5),catEye),{position:new THREE.Vector3(0.48,0.45,-0.08)}));
-const catNose=new THREE.Mesh(new THREE.SphereGeometry(0.025,5,4), new THREE.MeshStandardMaterial({color:0xff8a80}));
-catNose.position.set(0.52,0.38,0); lucyfer.add(catNose);
-scene.add(lucyfer);
-const lc=document.createElement('canvas'); lc.width=200; lc.height=48;
-const lctx=lc.getContext('2d');
-lctx.fillStyle='rgba(0,0,0,0.65)'; lctx.beginPath(); lctx.roundRect(6,5,188,38,9); lctx.fill();
-lctx.fillStyle='#ce93d8'; lctx.font='bold 20px system-ui'; lctx.textAlign='center'; lctx.fillText('Lucyfer 🐱',100,30);
-const ls=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(lc),transparent:true,depthTest:false}));
-ls.scale.set(1.8,0.43,1); ls.position.y=1.1; lucyfer.add(ls);
+var tail=new THREE.Mesh(new THREE.CapsuleGeometry(0.04,0.5,3,6), catM);
+tail.position.set(-0.45,0.4,0); tail.rotation.z=-0.6; lucy.add(tail);
+var cEye=new THREE.MeshStandardMaterial({color:0xffc107, emissive:0x443300, emissiveIntensity:0.3});
+lucy.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.04,6,5),cEye),{position:new THREE.Vector3(0.48,0.45,0.08)}));
+lucy.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(0.04,6,5),cEye),{position:new THREE.Vector3(0.48,0.45,-0.08)}));
+var cNose=new THREE.Mesh(new THREE.SphereGeometry(0.025,5,4), new THREE.MeshStandardMaterial({color:0xff8a80}));
+cNose.position.set(0.52,0.38,0); lucy.add(cNose);
+scene.add(lucy);
+var lc=document.createElement('canvas'); lc.width=180; lc.height=40;
+var lx=lc.getContext('2d');
+lx.fillStyle='rgba(0,0,0,0.65)';
+if(lx.roundRect){ lx.beginPath(); lx.roundRect(4,4,172,32,8); lx.fill(); }
+else lx.fillRect(4,4,172,32);
+lx.fillStyle='#ce93d8'; lx.font='bold 18px system-ui'; lx.textAlign='center'; lx.fillText('Lucyfer',90,26);
+var ls=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(lc), transparent:true, depthTest:false}));
+ls.scale.set(1.7,0.4,1); ls.position.y=1.05; lucy.add(ls);
 
-// GRZYBY różne + trujące
-const mushrooms = [];
-const mushTypes = [
-  { name: 'Borowik', color: 0xc4a35a, stem: 0xf0e6d0, poison: false, points: 1 },
-  { name: 'Muchomor', color: 0xc62828, stem: 0xf5f5f5, poison: true, points: -1, spots: true },
-  { name: 'Maślak', color: 0x8d6e3f, stem: 0xe8dcc8, poison: false, points: 1 },
-  { name: 'Pieczarka', color: 0xf5f5f5, stem: 0xe0e0e0, poison: false, points: 1 },
-  { name: 'Sromotnik', color: 0xf5f0e0, stem: 0xe8e0d0, poison: true, points: -2 },
-  { name: 'Kurka', color: 0xffb300, stem: 0xffc107, poison: false, points: 2 }
+// ===== GRZYBY =====
+var mushrooms=[];
+var mushTypes=[
+  {name:'Borowik', color:0xc4a35a, stem:0xf0e6d0, poison:false, pts:1},
+  {name:'Muchomor', color:0xc62828, stem:0xf5f5f5, poison:true, pts:-1, spots:true},
+  {name:'Maślak', color:0x8d6e3f, stem:0xe8dcc8, poison:false, pts:1},
+  {name:'Pieczarka', color:0xf5f5f5, stem:0xe0e0e0, poison:false, pts:1},
+  {name:'Sromotnik', color:0xf5f0e0, stem:0xe8e0d0, poison:true, pts:-2},
+  {name:'Kurka', color:0xffb300, stem:0xffc107, poison:false, pts:2}
 ];
-function spawnMushroom(near=false) {
-  const type = mushTypes[Math.floor(Math.random()*mushTypes.length)];
-  const g = new THREE.Group();
-  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.32+Math.random()*0.1,10,7), new THREE.MeshStandardMaterial({color:type.color,roughness:0.55}));
-  cap.position.y=0.5; cap.scale.y=0.5; cap.castShadow=true; g.add(cap);
-  if (type.spots) {
-    for (let i=0;i<5;i++) {
-      const spot=new THREE.Mesh(new THREE.SphereGeometry(0.06,5,4),new THREE.MeshStandardMaterial({color:0xffffff}));
-      spot.position.set((Math.random()-0.5)*0.35,0.55+(Math.random()-0.5)*0.1,(Math.random()-0.5)*0.35); g.add(spot);
-    }
-  }
-  const stem=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.11,0.38,7),new THREE.MeshStandardMaterial({color:type.stem,roughness:0.7}));
-  stem.position.y=0.19; g.add(stem);
-  if (type.name==='Sromotnik') {
-    const ring=new THREE.Mesh(new THREE.TorusGeometry(0.12,0.025,6,10),new THREE.MeshStandardMaterial({color:0xf0e8d8}));
-    ring.rotation.x=Math.PI/2; ring.position.y=0.32; g.add(ring);
-  }
-  if (near) {
-    const a=Math.random()*Math.PI*2, r=8+Math.random()*18;
-    g.position.set(player.position.x+Math.cos(a)*r,0,player.position.z+Math.sin(a)*r);
-  } else {
-    g.position.set((Math.random()-0.5)*WORLD*0.75,0,(Math.random()-0.5)*WORLD*0.75);
-    if (g.position.length()<12) g.position.setLength(15);
-  }
-  g.userData={collected:false, type}; scene.add(g); mushrooms.push(g);
+function spawnMush(near){
+  var type=mushTypes[Math.floor(Math.random()*mushTypes.length)];
+  var g=new THREE.Group();
+  var cap=new THREE.Mesh(new THREE.SphereGeometry(0.32,8,6), new THREE.MeshStandardMaterial({color:type.color, roughness:0.55}));
+  cap.position.y=0.48; cap.scale.y=0.5; cap.castShadow=true; g.add(cap);
+  if(type.spots){ for(var i=0;i<4;i++){ var sp=new THREE.Mesh(new THREE.SphereGeometry(0.05,4,3), new THREE.MeshStandardMaterial({color:0xffffff})); sp.position.set((Math.random()-0.5)*0.3,0.52,(Math.random()-0.5)*0.3); g.add(sp);} }
+  var st=new THREE.Mesh(new THREE.CylinderGeometry(0.08,0.1,0.36,6), new THREE.MeshStandardMaterial({color:type.stem}));
+  st.position.y=0.18; g.add(st);
+  if(near){ var a=Math.random()*Math.PI*2, r=8+Math.random()*16; g.position.set(player.position.x+Math.cos(a)*r,0,player.position.z+Math.sin(a)*r); }
+  else { g.position.set((Math.random()-0.5)*WORLD*0.7,0,(Math.random()-0.5)*WORLD*0.7); if(g.position.length()<10) g.position.setLength(14); }
+  g.userData={done:false, type:type}; scene.add(g); mushrooms.push(g);
 }
-for (let i=0;i<70;i++) spawnMushroom();
+for(var i=0;i<45;i++) spawnMush(false);
 
-// DRÓB + rzadkie kury z kurczętami
-const chickens = [];
-const chicks = []; // małe kurczaki podążające za mamą
-
-function makeChicken(isRooster=false, withChicks=false) {
-  const g=new THREE.Group();
-  const col=isRooster?0xffcc80:0xfff8e7;
-  const body=new THREE.Mesh(new THREE.SphereGeometry(0.3,8,6),new THREE.MeshStandardMaterial({color:col,roughness:0.7}));
-  body.position.y=0.35; body.castShadow=true; g.add(body);
-  const head=new THREE.Mesh(new THREE.SphereGeometry(0.15,7,5),new THREE.MeshStandardMaterial({color:col}));
-  head.position.set(0.25,0.55,0); g.add(head);
-  const comb=new THREE.Mesh(new THREE.BoxGeometry(0.06,isRooster?0.18:0.11,0.09),new THREE.MeshStandardMaterial({color:0xe53935}));
-  comb.position.set(0.25,isRooster?0.76:0.7,0); g.add(comb);
-  if (isRooster) {
-    const t=new THREE.Mesh(new THREE.ConeGeometry(0.13,0.38,4),new THREE.MeshStandardMaterial({color:0xe53935}));
-    t.rotation.z=Math.PI/2; t.position.set(-0.32,0.45,0); g.add(t);
-  }
-  const beak=new THREE.Mesh(new THREE.ConeGeometry(0.04,0.1,4),new THREE.MeshStandardMaterial({color:0xffa000}));
-  beak.rotation.z=-Math.PI/2; beak.position.set(0.38,0.52,0); g.add(beak);
-  g.position.set((Math.random()-0.5)*WORLD*0.6,0,(Math.random()-0.5)*WORLD*0.6);
-  g.userData={vx:(Math.random()-0.5)*1.8,vz:(Math.random()-0.5)*1.8,timer:Math.random()*4,isRooster,petCD:0, isMother:withChicks};
+// ===== KURY + KURCZĘTA =====
+var chickens=[], chicks=[];
+function makeChicken(rooster, withChicks){
+  var g=new THREE.Group();
+  var col=rooster?0xffcc80:0xfff8e7;
+  var b=new THREE.Mesh(new THREE.SphereGeometry(0.28,7,5), new THREE.MeshStandardMaterial({color:col}));
+  b.position.y=0.32; b.castShadow=true; g.add(b);
+  var hd=new THREE.Mesh(new THREE.SphereGeometry(0.14,6,5), new THREE.MeshStandardMaterial({color:col}));
+  hd.position.set(0.22,0.5,0); g.add(hd);
+  var comb=new THREE.Mesh(new THREE.BoxGeometry(0.05,rooster?0.16:0.1,0.08), new THREE.MeshStandardMaterial({color:0xe53935}));
+  comb.position.set(0.22,rooster?0.7:0.64,0); g.add(comb);
+  if(rooster){ var t=new THREE.Mesh(new THREE.ConeGeometry(0.12,0.35,4), new THREE.MeshStandardMaterial({color:0xe53935})); t.rotation.z=Math.PI/2; t.position.set(-0.3,0.4,0); g.add(t); }
+  var bk=new THREE.Mesh(new THREE.ConeGeometry(0.035,0.09,3), new THREE.MeshStandardMaterial({color:0xffa000}));
+  bk.rotation.z=-Math.PI/2; bk.position.set(0.34,0.48,0); g.add(bk);
+  g.position.set((Math.random()-0.5)*WORLD*0.55,0,(Math.random()-0.5)*WORLD*0.55);
+  g.userData={vx:(Math.random()-0.5)*1.6, vz:(Math.random()-0.5)*1.6, timer:Math.random()*3, petCD:0};
   scene.add(g); chickens.push(g);
-
-  // Rzadkie kury z 1–3 małymi kurczętami, które chodzą za mamą
-  if (withChicks && !isRooster) {
-    const num = 1 + Math.floor(Math.random()*3);
-    for (let k=0; k<num; k++) {
-      const ch = new THREE.Group();
-      const cBody = new THREE.Mesh(new THREE.SphereGeometry(0.12,6,5), new THREE.MeshStandardMaterial({color:0xffe082, roughness:0.7}));
-      cBody.position.y=0.14; cBody.castShadow=true; ch.add(cBody);
-      const cHead = new THREE.Mesh(new THREE.SphereGeometry(0.07,5,4), new THREE.MeshStandardMaterial({color:0xffe082}));
-      cHead.position.set(0.1,0.22,0); ch.add(cHead);
-      const cBeak = new THREE.Mesh(new THREE.ConeGeometry(0.02,0.05,3), new THREE.MeshStandardMaterial({color:0xffa000}));
-      cBeak.rotation.z=-Math.PI/2; cBeak.position.set(0.16,0.2,0); ch.add(cBeak);
+  if(withChicks && !rooster){
+    var n=1+Math.floor(Math.random()*3);
+    for(var k=0;k<n;k++){
+      var ch=new THREE.Group();
+      var cb=new THREE.Mesh(new THREE.SphereGeometry(0.11,5,4), new THREE.MeshStandardMaterial({color:0xffe082}));
+      cb.position.y=0.12; ch.add(cb);
+      var chd=new THREE.Mesh(new THREE.SphereGeometry(0.06,4,3), new THREE.MeshStandardMaterial({color:0xffe082}));
+      chd.position.set(0.08,0.18,0); ch.add(chd);
       ch.position.copy(g.position);
-      ch.position.x += (Math.random()-0.5)*1.2;
-      ch.position.z += (Math.random()-0.5)*1.2;
-      ch.userData = { mother: g, offset: new THREE.Vector3((Math.random()-0.5)*0.9, 0, (Math.random()-0.5)*0.9), bob: Math.random()*Math.PI*2 };
-      scene.add(ch);
-      chicks.push(ch);
+      ch.position.x+=(Math.random()-0.5); ch.position.z+=(Math.random()-0.5);
+      ch.userData={mom:g, off:new THREE.Vector3((Math.random()-0.5)*0.8,0,(Math.random()-0.5)*0.8), bob:Math.random()*6};
+      scene.add(ch); chicks.push(ch);
     }
   }
-  return g;
 }
-for (let i=0;i<18;i++) makeChicken(false, false);
-for (let i=0;i<7;i++) makeChicken(true, false);
-// 4 rzadkie mamy z kurczętami
-for (let i=0;i<4;i++) makeChicken(false, true);
+for(var i=0;i<14;i++) makeChicken(false,false);
+for(var i=0;i<5;i++) makeChicken(true,false);
+for(var i=0;i<4;i++) makeChicken(false,true);
 
-// DZIK
-const boar=new THREE.Group();
-const bb=new THREE.Mesh(new THREE.BoxGeometry(1.7,0.95,0.95),new THREE.MeshStandardMaterial({color:0x4e342e,roughness:0.85}));
-bb.position.y=0.58; bb.castShadow=true; boar.add(bb);
-const bh=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.65,0.7),new THREE.MeshStandardMaterial({color:0x3e2723}));
-bh.position.set(1.0,0.62,0); boar.add(bh);
-[-0.18,0.18].forEach(z=>{const t=new THREE.Mesh(new THREE.ConeGeometry(0.055,0.28,5),new THREE.MeshStandardMaterial({color:0xf5f5f5}));t.rotation.z=Math.PI/2;t.position.set(1.35,0.4,z);boar.add(t);});
-const be=new THREE.MeshStandardMaterial({color:0xff1744});
-boar.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.1,0.1,0.07),be),{position:new THREE.Vector3(1.3,0.78,0.25)}));
-boar.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(0.1,0.1,0.07),be),{position:new THREE.Vector3(1.3,0.78,-0.25)}));
-boar.position.set(-40,0,-30);
-boar.userData={hp:100,maxHp:100,alive:true};
+// ===== DZIK =====
+var boar=new THREE.Group();
+var bb=new THREE.Mesh(new THREE.BoxGeometry(1.65,0.9,0.9), new THREE.MeshStandardMaterial({color:0x4e342e}));
+bb.position.y=0.55; bb.castShadow=true; boar.add(bb);
+var bh=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.6,0.65), new THREE.MeshStandardMaterial({color:0x3e2723}));
+bh.position.set(0.95,0.58,0); boar.add(bh);
+[-0.16,0.16].forEach(function(z){ var t=new THREE.Mesh(new THREE.ConeGeometry(0.05,0.25,4), new THREE.MeshStandardMaterial({color:0xf5f5f5})); t.rotation.z=Math.PI/2; t.position.set(1.28,0.38,z); boar.add(t); });
+boar.position.set(-35,0,-28);
+boar.userData={hp:100, max:100, alive:true};
 scene.add(boar);
-let boarState='patrol', boarTarget=new THREE.Vector3(-25,0,-20), boarRespawn=0;
-const projectiles=[];
+var boarSt='patrol', boarT=new THREE.Vector3(-20,0,-15), boarRes=0;
+var projectiles=[];
 
-function addMessage(text,type='ogorczak'){
-  const el=document.createElement('div'); el.className='msg '+type;
-  const author=type==='piotrek'?'Piotrek':type==='system'?'System':type==='quest'?'Wyzwanie':type==='lucyfer'?'Lucyfer':'Ogórczak';
-  el.innerHTML=`<div class="author">${author}</div>${text}`;
-  const box=document.getElementById('messages'); box.appendChild(el);
+// ===== UI =====
+function addMsg(text, type){
+  type=type||'ogorczak';
+  var el=document.createElement('div'); el.className='msg '+type;
+  var au=type==='piotrek'?'Piotrek':type==='system'?'System':type==='quest'?'Wyzwanie':type==='lucyfer'?'Lucyfer':'Ogórczak';
+  el.innerHTML='<div class="author">'+au+'</div>'+text;
+  var box=document.getElementById('messages'); box.appendChild(el);
   while(box.children.length>4) box.removeChild(box.firstChild);
-  setTimeout(()=>{if(el.parentNode)el.remove();},11000);
+  setTimeout(function(){ if(el.parentNode) el.remove(); }, 10000);
 }
-function updateMood(){
-  const m=state.worldMood;
-  let t='spokój', c='#a8ff78';
-  if(m<25){t='napięcie';c='#ff8a80';} else if(m<45){t='niespokojny';c='#ffd54f';} else if(m>75){t='radosny';c='#69f0ae';}
-  document.getElementById('mood').textContent='Nastrój świata: '+t;
+function setMood(d){
+  state.mood=Math.max(0,Math.min(100,state.mood+d));
+  var t='spokój', c='#a8ff78';
+  if(state.mood<25){t='napięcie';c='#ff8a80';}
+  else if(state.mood<45){t='niespokojny';c='#ffd54f';}
+  else if(state.mood>75){t='radosny';c='#69f0ae';}
+  document.getElementById('mood').textContent='Nastrój: '+t;
   document.getElementById('mood').style.color=c;
 }
-function changeMood(delta){ state.worldMood=Math.max(0,Math.min(100,state.worldMood+delta)); updateMood(); }
-
-const ogLines=[
-  'Marcin, czy grzyby smakują jak sukces? Bo ja smakuję jak kiszone wątpliwości.',
-  'Jeśli dzik Cię goni – jesteś interesujący. Filozofia ogórka.',
-  'Piotrek mówi, że jestem uroczy. Ja mówię, że jestem warzywem z ambicjami.',
+function updQuest(){
+  var q=quests[state.quest];
+  if(!q){ document.getElementById('questText').textContent='Wszystkie wyzwania ukończone!'; return; }
+  var p='';
+  if(q.type==='mush') p=' ('+Math.min(state.score,q.n)+'/'+q.n+')';
+  if(q.type==='kill') p=' ('+Math.min(state.kills,q.n)+'/'+q.n+')';
+  if(q.type==='pet') p=' ('+Math.min(state.pets,q.n)+'/'+q.n+')';
+  if(q.type==='talk'||q.type==='lucy') p=state.qProg>=1?' ✓':'';
+  document.getElementById('questText').textContent=q.t+p;
+}
+function checkQ(){
+  var q=quests[state.quest]; if(!q) return;
+  var ok=false;
+  if(q.type==='mush'&&state.score>=q.n) ok=true;
+  if(q.type==='kill'&&state.kills>=q.n) ok=true;
+  if(q.type==='pet'&&state.pets>=q.n) ok=true;
+  if((q.type==='talk'||q.type==='lucy')&&state.qProg>=1) ok=true;
+  if(ok){
+    addMsg('Wyzwanie ukończone: '+q.t, 'quest'); setMood(8);
+    state.quest++; state.qProg=0;
+    if(state.quest<quests.length) setTimeout(function(){ addMsg('Nowe: '+quests[state.quest].t,'quest'); },1200);
+    else setTimeout(function(){ addMsg('Przeszedłeś wszystko. Jesteś legendą.','ogorczak'); },1800);
+  }
+  updQuest();
+}
+var ogLines=[
+  'Marcin, grzyby smakują jak sukces. Ja smakuję jak kiszone wątpliwości.',
+  'Jeśli dzik Cię goni – jesteś interesujący.',
+  'Piotrek mówi, że jestem uroczy. Ja jestem warzywem z ambicjami.',
   'Czasami robię kupę. Czasami historię. Dziś kupę.',
-  'Kury patrzą na mnie jak na byłego. Nieprzyjemnie.',
-  'Muchomor wygląda kusząco. To pułapka. Prawie jak miłość.',
-  'Lucyfer znowu poluje. Ja zbieram grzyby. Każdy ma swoje hobby.',
-  'Gdybym miał ręce, napisałbym pamiętnik: „Dzióbem przez życie”.',
-  'Piotrek chodzi sam. Może tęskni. Albo zbiera myśli.',
-  'Uwaga: ten komunikat wygenerował ogórek pod wpływem emocji i niedoboru soli.',
-  'Marcin, majonez to sos czy styl życia? Poważne pytanie.',
-  'Zjadłem coś dziwnego? Świat się kręci. Albo to tylko ja.'
+  'Muchomor wygląda kusząco. To pułapka.',
+  'Lucyfer poluje. Ja zbieram. Każdy ma hobby.',
+  'Majonez to sos czy styl życia?',
+  'Kury patrzą na mnie jak na byłego.'
 ];
-const piotrekReplies={
-  default:['Hej Marcin ❤️','Kocham Cię, nawet gdy grasz ogórkiem.','Uważaj na grzyby i dzika.','Przynieś mi jadalnego grzyba.','Jesteś najsłodszy.','Ogórczak dziś dumny.','Słucham.'],
-  love:['Ja Ciebie też najbardziej ❤️','Ty i Twój ogórek to moje szczęście.','Przytulam Cię (przez internet).'],
-  grzyb:['Tylko jadalne, proszę!','Muchomorów unikaj.','Przynieś kurkę – ulubione.'],
-  dzik:['Uważaj na dzika!','Majonezowa bomba działa.','Wracaj w jednym kawałku.'],
-  lucy:['Lucyfer znowu się kręci?','Ten kot ma charakter.','Nie głaszcz go za dużo.'],
-  sad:['Martwię się o Ciebie...','Świat dziś jakiś przygnębiony.','Chodź bliżej, pogadamy.']
-};
-function replyToPiotrek(text){
-  const t=text.toLowerCase();
-  let pool=piotrekReplies.default;
-  if(/kocham|miłość|serce|❤️|love/.test(t)) pool=piotrekReplies.love;
-  else if(/grzyb|borowik|kurka|maślak/.test(t)) pool=piotrekReplies.grzyb;
-  else if(/dzik/.test(t)) pool=piotrekReplies.dzik;
-  else if(/lucy|kot|lucyfer/.test(t)) pool=piotrekReplies.lucy;
-  else if(state.worldMood<35) pool=piotrekReplies.sad;
-  setTimeout(()=>addMessage(pool[Math.floor(Math.random()*pool.length)],'piotrek'),500+Math.random()*700);
-  changeMood(3);
-  piotrek.userData.mood=Math.min(100,piotrek.userData.mood+8);
-  if(quests[state.questIndex]?.type==='talk'){state.questProgress++;checkQuest();}
-  piotrek.userData.state='come';
-  piotrek.userData.target.copy(player.position);
-  piotrek.userData.timer=4;
-}
-function updateQuestUI(){
-  const q=quests[state.questIndex];
-  if(!q){document.getElementById('questText').textContent='Wszystkie wyzwania ukończone!';return;}
-  let prog='';
-  if(q.type==='mushrooms') prog=` (${Math.min(state.score,q.target)}/${q.target})`;
-  if(q.type==='kill') prog=` (${Math.min(state.kills,q.target)}/${q.target})`;
-  if(q.type==='pet') prog=` (${Math.min(state.chickensPet,q.target)}/${q.target})`;
-  if(q.type==='talk'||q.type==='lucy') prog=state.questProgress>=1?' ✓':'';
-  document.getElementById('questText').textContent=q.text+prog;
-}
-function checkQuest(){
-  const q=quests[state.questIndex]; if(!q) return;
-  let done=false;
-  if(q.type==='mushrooms'&&state.score>=q.target) done=true;
-  if(q.type==='kill'&&state.kills>=q.target) done=true;
-  if(q.type==='pet'&&state.chickensPet>=q.target) done=true;
-  if((q.type==='talk'||q.type==='lucy')&&state.questProgress>=1) done=true;
-  if(done){
-    addMessage('Wyzwanie ukończone: '+q.text,'quest');
-    changeMood(8);
-    state.questIndex++; state.questProgress=0;
-    if(state.questIndex<quests.length) setTimeout(()=>addMessage('Nowe: '+quests[state.questIndex].text,'quest'),1400);
-    else setTimeout(()=>addMessage('Przeszedłeś wszystko. Jesteś legendą.','ogorczak'),2000);
-  }
-  updateQuestUI();
-}
 
-const sens=0.0021;
-function onMouseMove(e){
-  if(!state.pointerCaptured||!state.gameStarted) return;
-  state.targetCamYaw-=e.movementX*sens;
-  state.targetCamPitch-=e.movementY*sens;
-  state.targetCamPitch=Math.max(-0.4,Math.min(0.75,state.targetCamPitch));
-}
-function capturePointer(){canvas.requestPointerLock();}
-function onPL(){
-  state.pointerCaptured=document.pointerLockElement===canvas;
-  document.getElementById('clickHint').style.display=state.pointerCaptured?'none':(state.gameStarted?'block':'none');
-  document.getElementById('crosshair').style.display=state.pointerCaptured?'block':'none';
-}
-function doStartGame(){
-  try {
-    document.getElementById('startScreen').style.display='none';
-    document.getElementById('ui').style.display='block';
-    state.gameStarted=true;
-    updateQuestUI();
-    updateMood();
-    // Pointer Lock po krótkim opóźnieniu (niektóre przeglądarki wymagają)
-    setTimeout(function(){ try { capturePointer(); } catch(e){} }, 100);
-    setTimeout(function(){ addMessage('No cześć Marcin. Świat żyje. Piotrek chodzi. Lucyfer poluje. Ja... jestem Tobą.','ogorczak'); },1000);
-    setTimeout(function(){ addMessage('Nowe wyzwanie: '+quests[0].text,'quest'); },5000);
-  } catch(err) {
-    console.error(err);
-    var el = document.getElementById('loadError');
-    if (el) { el.style.display='block'; el.textContent = 'Błąd startu: ' + (err.message||err); }
-  }
-}
-window.__startGame = doStartGame;
-document.getElementById('startBtn').addEventListener('click', doStartGame);
-document.addEventListener('pointerlockchange',onPL);
-canvas.addEventListener('click',()=>{if(state.gameStarted&&!state.pointerCaptured)capturePointer();});
-document.addEventListener('mousemove',onMouseMove);
-document.addEventListener('keydown',e=>{
+// Start callback
+window.__onGameStart = function(){
+  state.started=true;
+  updQuest(); setMood(0);
+  setTimeout(function(){ try{ canvas.requestPointerLock(); }catch(e){} }, 150);
+  setTimeout(function(){ addMsg('No cześć Marcin. Świat żyje. Piotrek chodzi. Lucyfer poluje.','ogorczak'); }, 800);
+  setTimeout(function(){ addMsg('Nowe wyzwanie: '+quests[0].t, 'quest'); }, 3500);
+};
+window.__gameReady = true;
+
+// Controls
+document.addEventListener('mousemove', function(e){
+  if(!state.locked||!state.started) return;
+  state.tYaw -= e.movementX * 0.0021;
+  state.tPitch -= e.movementY * 0.0021;
+  state.tPitch = Math.max(-0.4, Math.min(0.75, state.tPitch));
+});
+document.addEventListener('pointerlockchange', function(){
+  state.locked = document.pointerLockElement === canvas;
+  document.getElementById('clickHint').style.display = (!state.locked && state.started) ? 'block' : 'none';
+  document.getElementById('crosshair').style.display = state.locked ? 'block' : 'none';
+});
+canvas.addEventListener('click', function(){
+  if(state.started && !state.locked) try{ canvas.requestPointerLock(); }catch(e){}
+});
+document.addEventListener('keydown', function(e){
   state.keys[e.code]=true;
-  if(e.code==='Digit1')setWeapon(0); if(e.code==='Digit2')setWeapon(1); if(e.code==='Digit3')setWeapon(2);
-  if(e.code==='Space'){e.preventDefault();attack();}
-  if(e.code==='KeyE')interactPiotrek();
-  if(e.code==='KeyF')tryPet();
-  if(e.code==='Escape')document.exitPointerLock();
+  if(e.code==='Digit1') setW(0);
+  if(e.code==='Digit2') setW(1);
+  if(e.code==='Digit3') setW(2);
+  if(e.code==='Space'){ e.preventDefault(); attack(); }
+  if(e.code==='KeyE') interactP();
+  if(e.code==='KeyF') tryPet();
+  if(e.code==='Escape') document.exitPointerLock();
 });
-document.addEventListener('keyup',e=>{state.keys[e.code]=false;});
-document.addEventListener('mousedown',e=>{if(e.button===0&&state.pointerCaptured)attack();});
-document.querySelectorAll('.weaponSlot').forEach(s=>s.addEventListener('click',()=>setWeapon(+s.dataset.w)));
-function setWeapon(i){state.weapon=i;document.querySelectorAll('.weaponSlot').forEach((s,idx)=>s.classList.toggle('active',idx===i));document.getElementById('currentWeapon').textContent='Broń: '+state.weapons[i].name;}
-document.getElementById('btnPiotrek').addEventListener('click',sendToPiotrek);
-document.getElementById('btnLucy').addEventListener('click',callLucyfer);
-document.getElementById('btnChat').addEventListener('click',()=>{
-  const t=document.getElementById('chatInput').value.trim(); if(!t)return;
-  addMessage('Czat: '+t,'system'); setTimeout(()=>addMessage('Inny gracz: ten ogórek rządzi 🥒','system'),700);
+document.addEventListener('keyup', function(e){ state.keys[e.code]=false; });
+document.addEventListener('mousedown', function(e){ if(e.button===0 && state.locked) attack(); });
+document.querySelectorAll('.weaponSlot').forEach(function(s){
+  s.addEventListener('click', function(){ setW(+s.dataset.w); });
+});
+function setW(i){
+  state.weapon=i;
+  document.querySelectorAll('.weaponSlot').forEach(function(s,idx){ s.classList.toggle('active', idx===i); });
+  document.getElementById('currentWeapon').textContent='Broń: '+state.weapons[i].name;
+}
+document.getElementById('btnPiotrek').onclick=sendP;
+document.getElementById('btnLucy').onclick=callLucy;
+document.getElementById('btnChat').onclick=function(){
+  var t=document.getElementById('chatInput').value.trim(); if(!t) return;
+  addMsg('Czat: '+t,'system');
+  setTimeout(function(){ addMsg('Inny gracz: ten ogórek rządzi','system'); },700);
   document.getElementById('chatInput').value='';
-});
-document.getElementById('chatInput').addEventListener('keydown',e=>{
-  if(e.key==='Enter'){e.preventDefault(); const v=document.getElementById('chatInput').value.trim().toLowerCase();
-    if(v.includes('lucyfer')||v==='lucy') callLucyfer(); else sendToPiotrek();
+};
+document.getElementById('chatInput').addEventListener('keydown', function(e){
+  if(e.key==='Enter'){
+    e.preventDefault();
+    var v=document.getElementById('chatInput').value.trim().toLowerCase();
+    if(v.indexOf('lucyfer')>=0 || v==='lucy') callLucy();
+    else sendP();
   }
   e.stopPropagation();
 });
-function sendToPiotrek(){
-  const input=document.getElementById('chatInput'); const txt=input.value.trim(); if(!txt)return;
-  addMessage('Ty → Piotrek: '+txt,'system'); replyToPiotrek(txt); input.value='';
+function sendP(){
+  var input=document.getElementById('chatInput');
+  var txt=input.value.trim(); if(!txt) return;
+  addMsg('Ty → Piotrek: '+txt,'system');
+  var low=txt.toLowerCase();
+  var pool=['Hej Marcin','Kocham Cię.','Uważaj na grzyby.','Przynieś jadalnego grzyba.','Jesteś najsłodszy.'];
+  if(/kocham|miłość/.test(low)) pool=['Ja Ciebie też najbardziej','Ty i Twój ogórek to moje szczęście.'];
+  else if(/grzyb|muchomor|borowik/.test(low)) pool=['Tylko jadalne!','Muchomorów unikaj.'];
+  else if(/dzik/.test(low)) pool=['Uważaj na dzika!','Majonezowa bomba działa.'];
+  else if(/lucy|kot/.test(low)) pool=['Lucyfer ma charakter.','Nie głaszcz go za dużo.'];
+  setTimeout(function(){ addMsg(pool[Math.floor(Math.random()*pool.length)],'piotrek'); },500);
+  setMood(3);
+  piotrek.userData.st='come';
+  piotrek.userData.target.copy(player.position);
+  piotrek.userData.timer=4;
+  if(quests[state.quest] && quests[state.quest].type==='talk'){ state.qProg=1; checkQ(); }
+  input.value='';
 }
-function interactPiotrek(){
+function interactP(){
   if(player.position.distanceTo(piotrek.position)<6){
-    addMessage('Piotrek blisko. Napisz mu coś.','system');
-    document.getElementById('chatInput').focus(); document.exitPointerLock();
-  } else addMessage('Piotrek za daleko – chodzi po mapie.','system');
+    addMsg('Piotrek blisko. Napisz mu coś.','system');
+    document.getElementById('chatInput').focus();
+    document.exitPointerLock();
+  } else addMsg('Piotrek za daleko – chodzi po mapie.','system');
 }
-function callLucyfer(){
-  addMessage('Lucyfer! Chodź tu!','system');
-  lucyfer.visible=true;
-  lucyfer.userData.state='come';
-  lucyfer.userData.target.copy(player.position);
-  lucyfer.userData.timer=8;
-  lucyfer.userData.visibleTimer=45;
-  if(!state.storyFlags.metLucy){state.storyFlags.metLucy=true; addMessage('Mrucz... (to znaczy: jestem).','lucyfer');}
-  if(quests[state.questIndex]?.type==='lucy'){state.questProgress=1;checkQuest();}
+function callLucy(){
+  addMsg('Lucyfer! Chodź tu!','system');
+  lucy.visible=true;
+  lucy.userData.st='come';
+  lucy.userData.target.copy(player.position);
+  lucy.userData.timer=8;
+  lucy.userData.vis=40;
+  if(!state.flags.lucy){ state.flags.lucy=true; addMsg('Mrucz... (jestem).','lucyfer'); }
+  if(quests[state.quest] && quests[state.quest].type==='lucy'){ state.qProg=1; checkQ(); }
   document.getElementById('chatInput').value='';
 }
 function tryPet(){
-  let petted=false;
-  chickens.forEach(c=>{
+  var ok=false;
+  chickens.forEach(function(c){
     if(player.position.distanceTo(c.position)<2.2 && c.userData.petCD<=0){
-      c.userData.petCD=3; state.chickensPet++; petted=true; changeMood(2);
-      if(!state.storyFlags.firstPet){state.storyFlags.firstPet=true; addMessage('Kura zaakceptowała głaskanie. Zaszczyt.','ogorczak');}
-      else if(Math.random()<0.4) addMessage(['*kura gdacze*','Mięciutkie piórka.','Kura: ok.'][Math.floor(Math.random()*3)],'ogorczak');
+      c.userData.petCD=3; state.pets++; ok=true; setMood(2);
+      if(!state.flags.pet){ state.flags.pet=true; addMsg('Kura zaakceptowała głaskanie.','ogorczak'); }
+      else if(Math.random()<0.4) addMsg('*kura gdacze*','ogorczak');
       c.userData.vx=(Math.random()-0.5)*3; c.userData.vz=(Math.random()-0.5)*3;
-      if(quests[state.questIndex]?.type==='pet') checkQuest();
+      if(quests[state.quest]&&quests[state.quest].type==='pet') checkQ();
     }
   });
-  // Głaskanie kurcząt
-  chicks.forEach(ch=>{
-    if(player.position.distanceTo(ch.position)<1.6){
-      petted=true; changeMood(1);
-      if(Math.random()<0.5) addMessage('*piszczy mały kurczak*','ogorczak');
-    }
+  chicks.forEach(function(ch){
+    if(player.position.distanceTo(ch.position)<1.5){ ok=true; setMood(1); if(Math.random()<0.5) addMsg('*piszczy kurczak*','ogorczak'); }
   });
-  if(lucyfer.visible && player.position.distanceTo(lucyfer.position)<2.5){
-    lucyfer.userData.petCount++; petted=true;
-    if(lucyfer.userData.petCount>4){
-      addMessage('Lucyfer syczy! Za dużo głaskania.','lucyfer'); changeMood(-5);
-      lucyfer.userData.state='flee'; lucyfer.userData.timer=6;
-      const a=Math.random()*Math.PI*2;
-      lucyfer.userData.target.set(player.position.x+Math.cos(a)*25,0,player.position.z+Math.sin(a)*25);
+  if(lucy.visible && player.position.distanceTo(lucy.position)<2.4){
+    lucy.userData.pets++; ok=true;
+    if(lucy.userData.pets>4){
+      addMsg('Lucyfer syczy! Za dużo.','lucyfer'); setMood(-5);
+      lucy.userData.st='flee'; lucy.userData.timer=6;
+      var a=Math.random()*Math.PI*2;
+      lucy.userData.target.set(player.position.x+Math.cos(a)*20,0,player.position.z+Math.sin(a)*20);
     } else {
-      addMessage(['*mruczy*','Lucyfer pozwala. Na razie.','Mrucz...'][Math.floor(Math.random()*3)],'lucyfer');
-      changeMood(3);
+      addMsg('*mruczy*','lucyfer'); setMood(3);
     }
   }
-  if(!petted) addMessage('Nic w pobliżu. Podejdź do kury lub Lucyfera (F).','system');
+  if(!ok) addMsg('Podejdź bliżej do kury/kurczaka/Lucyfera i naciśnij F.','system');
 }
 function attack(){
-  const now=performance.now()/1000; const w=state.weapons[state.weapon];
-  if(now-state.lastAttack<w.cooldown) return; state.lastAttack=now;
-  const dir=new THREE.Vector3(); camera.getWorldDirection(dir); dir.normalize();
-  const proj=new THREE.Mesh(new THREE.SphereGeometry(0.18,7,6),new THREE.MeshStandardMaterial({color:w.color,emissive:w.color,emissiveIntensity:0.22}));
-  const start=camera.position.clone().add(dir.clone().multiplyScalar(1.4));
-  start.y=Math.max(player.position.y+1.3,start.y-0.25);
+  var now=performance.now()/1000;
+  var w=state.weapons[state.weapon];
+  if(now-state.lastAtk < w.cd) return;
+  state.lastAtk=now;
+  var dir=new THREE.Vector3(); camera.getWorldDirection(dir); dir.normalize();
+  var proj=new THREE.Mesh(new THREE.SphereGeometry(0.18,6,5), new THREE.MeshStandardMaterial({color:w.color, emissive:w.color, emissiveIntensity:0.2}));
+  var start=camera.position.clone().add(dir.clone().multiplyScalar(1.3));
+  start.y=Math.max(player.position.y+1.3, start.y-0.2);
   proj.position.copy(start);
-  proj.userData={vel:dir.multiplyScalar(30),life:2.3,damage:w.damage};
+  proj.userData={vel:dir.multiplyScalar(28), life:2.2, dmg:w.damage};
   scene.add(proj); projectiles.push(proj);
 }
-function maybePoop(dt){
-  state.poopCooldown-=dt;
-  if(state.poopCooldown<=0&&Math.random()<0.0003){
-    state.poopCooldown=28+Math.random()*20;
-    const poop=new THREE.Mesh(new THREE.BoxGeometry(0.32,0.45,0.32),new THREE.MeshStandardMaterial({color:0x6b8e23}));
-    poop.position.copy(player.position); poop.position.y=0.22;
-    poop.position.x+=(Math.random()-0.5); poop.position.z+=(Math.random()-0.5);
-    scene.add(poop);
-    addMessage(['Kupa-ogórek. Artystyczna.','Znowu. Nie oceniaj.','Biodegradowalny dar.'][Math.floor(Math.random()*3)],'ogorczak');
-    changeMood(-1);
-  }
-}
 
-const clock=new THREE.Clock();
-const camOffset=new THREE.Vector3(), idealCam=new THREE.Vector3(), lookT=new THREE.Vector3();
+// ===== LOOP =====
+var clock=new THREE.Clock();
+var camOff=new THREE.Vector3(), ideal=new THREE.Vector3(), look=new THREE.Vector3();
 
 function animate(){
   requestAnimationFrame(animate);
-  const dt=Math.min(clock.getDelta(),0.04);
-  if(!state.gameStarted){
-    camera.position.set(Math.sin(performance.now()*0.0002)*10,6,14);
-    camera.lookAt(0,1.5,0); renderer.render(scene,camera); return;
+  var dt=Math.min(clock.getDelta(), 0.05);
+  if(!state.started){
+    camera.position.set(Math.sin(performance.now()*0.00025)*9, 5.5, 12);
+    camera.lookAt(0,1.5,0);
+    renderer.render(scene, camera);
+    return;
   }
-  state.camYaw+=(state.targetCamYaw-state.camYaw)*Math.min(1,14*dt);
-  state.camPitch+=(state.targetCamPitch-state.camPitch)*Math.min(1,14*dt);
+  state.yaw += (state.tYaw-state.yaw)*Math.min(1,14*dt);
+  state.pitch += (state.tPitch-state.pitch)*Math.min(1,14*dt);
   velocity.x*=(1-11*dt); velocity.z*=(1-11*dt);
-  const input=new THREE.Vector3();
-  if(state.keys['KeyW'])input.z-=1; if(state.keys['KeyS'])input.z+=1;
-  if(state.keys['KeyA'])input.x-=1; if(state.keys['KeyD'])input.x+=1;
-  if(input.lengthSq()>0){
-    input.normalize();
-    const s=Math.sin(state.camYaw),c=Math.cos(state.camYaw);
-    const mx=input.x*c+input.z*s, mz=-input.x*s+input.z*c;
-    velocity.x+=mx*36*dt; velocity.z+=mz*36*dt;
+  var inp=new THREE.Vector3();
+  if(state.keys['KeyW']) inp.z-=1;
+  if(state.keys['KeyS']) inp.z+=1;
+  if(state.keys['KeyA']) inp.x-=1;
+  if(state.keys['KeyD']) inp.x+=1;
+  if(inp.lengthSq()>0){
+    inp.normalize();
+    var s=Math.sin(state.yaw), c=Math.cos(state.yaw);
+    var mx=inp.x*c+inp.z*s, mz=-inp.x*s+inp.z*c;
+    velocity.x+=mx*34*dt; velocity.z+=mz*34*dt;
     playerYaw=Math.atan2(mx,mz);
-  } else playerYaw=state.camYaw;
+  } else playerYaw=state.yaw;
   player.rotation.y=playerYaw;
   player.position.x+=velocity.x*dt; player.position.z+=velocity.z*dt;
-  const half=WORLD*0.48;
+  var half=WORLD*0.46;
   player.position.x=THREE.MathUtils.clamp(player.position.x,-half,half);
   player.position.z=THREE.MathUtils.clamp(player.position.z,-half,half);
 
-  const dist=7.8;
-  camOffset.set(Math.sin(state.camYaw)*dist*Math.cos(state.camPitch), 3.4+Math.sin(state.camPitch)*3.6, Math.cos(state.camYaw)*dist*Math.cos(state.camPitch));
-  idealCam.copy(player.position).add(camOffset);
-  camera.position.lerp(idealCam,1-Math.pow(0.0005,dt));
-  lookT.set(player.position.x,player.position.y+1.7,player.position.z);
-  camera.lookAt(lookT);
+  var dist=7.5;
+  camOff.set(Math.sin(state.yaw)*dist*Math.cos(state.pitch), 3.3+Math.sin(state.pitch)*3.5, Math.cos(state.yaw)*dist*Math.cos(state.pitch));
+  ideal.copy(player.position).add(camOff);
+  camera.position.lerp(ideal, 1-Math.pow(0.0005,dt));
+  look.set(player.position.x, player.position.y+1.7, player.position.z);
+  camera.lookAt(look);
 
-  let nearPet=false;
-  chickens.forEach(c=>{if(player.position.distanceTo(c.position)<2.3)nearPet=true;});
-  chicks.forEach(ch=>{if(player.position.distanceTo(ch.position)<1.8)nearPet=true;});
-  if(lucyfer.visible&&player.position.distanceTo(lucyfer.position)<2.6)nearPet=true;
-  document.getElementById('petHint').style.display=nearPet&&state.pointerCaptured?'block':'none';
+  var near=false;
+  chickens.forEach(function(c){ if(player.position.distanceTo(c.position)<2.2) near=true; });
+  chicks.forEach(function(ch){ if(player.position.distanceTo(ch.position)<1.6) near=true; });
+  if(lucy.visible && player.position.distanceTo(lucy.position)<2.5) near=true;
+  document.getElementById('petHint').style.display=(near&&state.locked)?'block':'none';
 
-  chickens.forEach(c=>{
+  chickens.forEach(function(c){
     c.userData.timer-=dt; c.userData.petCD=Math.max(0,c.userData.petCD-dt);
-    if(c.userData.timer<=0){c.userData.vx=(Math.random()-0.5)*2.2;c.userData.vz=(Math.random()-0.5)*2.2;c.userData.timer=1.5+Math.random()*3;}
+    if(c.userData.timer<=0){ c.userData.vx=(Math.random()-0.5)*2; c.userData.vz=(Math.random()-0.5)*2; c.userData.timer=1.5+Math.random()*3; }
     c.position.x+=c.userData.vx*dt; c.position.z+=c.userData.vz*dt;
     c.rotation.y=Math.atan2(c.userData.vx,c.userData.vz);
-    if(Math.abs(c.position.x)>half*0.9)c.userData.vx*=-1;
-    if(Math.abs(c.position.z)>half*0.9)c.userData.vz*=-1;
+    if(Math.abs(c.position.x)>half*0.9) c.userData.vx*=-1;
+    if(Math.abs(c.position.z)>half*0.9) c.userData.vz*=-1;
+  });
+  chicks.forEach(function(ch){
+    var mom=ch.userData.mom; if(!mom) return;
+    var tgt=mom.position.clone().add(ch.userData.off);
+    ch.position.x+=(tgt.x-ch.position.x)*Math.min(1,4*dt);
+    ch.position.z+=(tgt.z-ch.position.z)*Math.min(1,4*dt);
+    ch.userData.bob+=dt*8;
+    ch.position.y=Math.abs(Math.sin(ch.userData.bob))*0.04;
+    var dx=tgt.x-ch.position.x, dz=tgt.z-ch.position.z;
+    if(dx*dx+dz*dz>0.01) ch.rotation.y=Math.atan2(dx,dz);
   });
 
-  // Kurczaki podążają za mamą
-  chicks.forEach(ch=>{
-    const mom = ch.userData.mother;
-    if (!mom) return;
-    const target = mom.position.clone().add(ch.userData.offset);
-    ch.position.x += (target.x - ch.position.x) * Math.min(1, 4*dt);
-    ch.position.z += (target.z - ch.position.z) * Math.min(1, 4*dt);
-    ch.userData.bob += dt * 8;
-    ch.position.y = Math.abs(Math.sin(ch.userData.bob)) * 0.04;
-    const dx = target.x - ch.position.x, dz = target.z - ch.position.z;
-    if (dx*dx + dz*dz > 0.01) ch.rotation.y = Math.atan2(dx, dz);
-  });
-
-  // Piotrek AI
-  const p=piotrek.userData;
-  p.timer-=dt;
-  if(p.state==='idle'||p.state==='wander'){
-    if(p.timer<=0){
-      if(Math.random()<0.4){ p.state='idle'; p.timer=2+Math.random()*4; }
-      else { p.state='wander'; p.target.set((Math.random()-0.5)*WORLD*0.5,0,(Math.random()-0.5)*WORLD*0.5); p.timer=6+Math.random()*8; }
+  var pu=piotrek.userData;
+  pu.timer-=dt;
+  if(pu.st==='idle'||pu.st==='wander'){
+    if(pu.timer<=0){
+      if(Math.random()<0.4){ pu.st='idle'; pu.timer=2+Math.random()*4; }
+      else { pu.st='wander'; pu.target.set((Math.random()-0.5)*WORLD*0.45,0,(Math.random()-0.5)*WORLD*0.45); pu.timer=5+Math.random()*7; }
     }
   }
-  if(p.state==='wander'||p.state==='come'){
-    const dir=p.target.clone().sub(piotrek.position); dir.y=0;
-    const d=dir.length();
-    if(d>0.8){ dir.normalize(); piotrek.position.add(dir.multiplyScalar((p.state==='come'?5.5:2.8)*dt)); piotrek.lookAt(p.target.x,piotrek.position.y,p.target.z); }
-    else if(p.state==='come'){ p.state='idle'; p.timer=3; if(Math.random()<0.5) addMessage(['Stoję tu. Z Tobą.','Miło, że jesteś.','Ogórczak dziś ładny.'][Math.floor(Math.random()*3)],'piotrek'); }
-  }
-  if(player.position.distanceTo(piotrek.position)<8 && Math.random()<0.0008){
-    addMessage(['Hej...','Marcin?','Uważaj na siebie.','Kocham Cię.'][Math.floor(Math.random()*4)],'piotrek');
+  if(pu.st==='wander'||pu.st==='come'){
+    var dir=pu.target.clone().sub(piotrek.position); dir.y=0;
+    if(dir.length()>0.9){ dir.normalize(); piotrek.position.add(dir.multiplyScalar((pu.st==='come'?5:2.6)*dt)); piotrek.lookAt(pu.target.x,piotrek.position.y,pu.target.z); }
+    else if(pu.st==='come'){ pu.st='idle'; pu.timer=3; if(Math.random()<0.5) addMsg('Miło, że jesteś.','piotrek'); }
   }
 
-  // Lucyfer AI
-  const l=lucyfer.userData;
-  if(lucyfer.visible){
-    l.visibleTimer-=dt;
-    if(l.visibleTimer<=0 && l.state!=='come'){ lucyfer.visible=false; l.petCount=0; }
-    l.timer-=dt;
-    if(l.state==='come'){
-      const dir=l.target.clone().sub(lucyfer.position); dir.y=0;
-      if(dir.length()>1.2){ dir.normalize(); lucyfer.position.add(dir.multiplyScalar(7*dt)); lucyfer.lookAt(l.target.x,0.3,l.target.z); }
-      else { l.state='wander'; l.timer=5; }
-    } else if(l.state==='flee'){
-      const dir=l.target.clone().sub(lucyfer.position); dir.y=0;
-      if(dir.length()>1){ dir.normalize(); lucyfer.position.add(dir.multiplyScalar(9*dt)); lucyfer.lookAt(l.target.x,0.3,l.target.z); }
-      else { l.state='wander'; l.timer=4; }
-    } else if(l.state==='hunt'){
-      let nearest=null, nd=999;
-      chickens.forEach(c=>{const d=lucyfer.position.distanceTo(c.position); if(d<nd){nd=d;nearest=c;}});
-      if(nearest && nd>1.5){ const dir=nearest.position.clone().sub(lucyfer.position); dir.y=0; dir.normalize(); lucyfer.position.add(dir.multiplyScalar(6*dt)); lucyfer.lookAt(nearest.position.x,0.3,nearest.position.z); }
-      else if(nearest){ nearest.userData.vx=(Math.random()-0.5)*8; nearest.userData.vz=(Math.random()-0.5)*8; addMessage('Lucyfer prawie złapał kurę!','lucyfer'); changeMood(-2); l.state='wander'; l.timer=8; }
+  var lu=lucy.userData;
+  if(lucy.visible){
+    lu.vis-=dt;
+    if(lu.vis<=0 && lu.st!=='come'){ lucy.visible=false; lu.pets=0; }
+    lu.timer-=dt;
+    if(lu.st==='come'){
+      var d=lu.target.clone().sub(lucy.position); d.y=0;
+      if(d.length()>1.2){ d.normalize(); lucy.position.add(d.multiplyScalar(7*dt)); lucy.lookAt(lu.target.x,0.3,lu.target.z); }
+      else { lu.st='wander'; lu.timer=5; }
+    } else if(lu.st==='flee'){
+      var d=lu.target.clone().sub(lucy.position); d.y=0;
+      if(d.length()>1){ d.normalize(); lucy.position.add(d.multiplyScalar(9*dt)); lucy.lookAt(lu.target.x,0.3,lu.target.z); }
+      else { lu.st='wander'; lu.timer=4; }
+    } else if(lu.st==='hunt'){
+      var nearest=null, nd=999;
+      chickens.forEach(function(c){ var dd=lucy.position.distanceTo(c.position); if(dd<nd){nd=dd;nearest=c;} });
+      if(nearest&&nd>1.4){ var d=nearest.position.clone().sub(lucy.position); d.y=0; d.normalize(); lucy.position.add(d.multiplyScalar(6*dt)); lucy.lookAt(nearest.position.x,0.3,nearest.position.z); }
+      else if(nearest){ nearest.userData.vx=(Math.random()-0.5)*7; nearest.userData.vz=(Math.random()-0.5)*7; addMsg('Lucyfer prawie złapał kurę!','lucyfer'); setMood(-2); lu.st='wander'; lu.timer=8; }
     } else {
-      if(l.timer<=0){
-        if(Math.random()<0.25){ l.state='hunt'; l.timer=10; }
-        else { l.state='wander'; l.target.set((Math.random()-0.5)*WORLD*0.4,0,(Math.random()-0.5)*WORLD*0.4); l.timer=5+Math.random()*6; }
+      if(lu.timer<=0){
+        if(Math.random()<0.22){ lu.st='hunt'; lu.timer=9; }
+        else { lu.st='wander'; lu.target.set((Math.random()-0.5)*WORLD*0.35,0,(Math.random()-0.5)*WORLD*0.35); lu.timer=4+Math.random()*5; }
       }
-      if(l.state==='wander'){ const dir=l.target.clone().sub(lucyfer.position); dir.y=0; if(dir.length()>1){ dir.normalize(); lucyfer.position.add(dir.multiplyScalar(4*dt)); lucyfer.lookAt(l.target.x,0.3,l.target.z); } }
+      if(lu.st==='wander'){ var d=lu.target.clone().sub(lucy.position); d.y=0; if(d.length()>1){ d.normalize(); lucy.position.add(d.multiplyScalar(3.8*dt)); lucy.lookAt(lu.target.x,0.3,lu.target.z); } }
     }
-  } else {
-    if(Math.random()<0.00015){
-      lucyfer.visible=true;
-      lucyfer.position.set(player.position.x+(Math.random()-0.5)*40,0,player.position.z+(Math.random()-0.5)*40);
-      l.visibleTimer=25+Math.random()*20; l.state='wander'; l.timer=4; l.petCount=0;
-      if(Math.random()<0.4) addMessage('Coś mruczy w krzakach...','ogorczak');
-    }
+  } else if(Math.random()<0.00012){
+    lucy.visible=true;
+    lucy.position.set(player.position.x+(Math.random()-0.5)*35,0,player.position.z+(Math.random()-0.5)*35);
+    lu.vis=22+Math.random()*18; lu.st='wander'; lu.timer=4; lu.pets=0;
   }
 
-  // Dzik
   if(!boar.userData.alive){
-    boarRespawn-=dt; document.getElementById('boarHP').style.display='none';
-    if(boarRespawn<=0){
-      boar.userData.alive=true; boar.userData.hp=boar.userData.maxHp;
-      boar.position.set((Math.random()>0.5?1:-1)*(30+Math.random()*25),0,(Math.random()>0.5?1:-1)*(25+Math.random()*25));
-      boar.visible=true; boarState='patrol';
-      addMessage('Chrumkanie wróciło. Nowy dzik.','ogorczak');
+    boarRes-=dt; document.getElementById('boarHP').style.display='none';
+    if(boarRes<=0){
+      boar.userData.alive=true; boar.userData.hp=100;
+      boar.position.set((Math.random()>0.5?1:-1)*(28+Math.random()*20),0,(Math.random()>0.5?1:-1)*(22+Math.random()*18));
+      boar.visible=true; boarSt='patrol';
     }
   } else {
-    const dtp=boar.position.distanceTo(player.position);
-    if(dtp<38){document.getElementById('boarHP').style.display='block';document.getElementById('boarHPFill').style.width=(boar.userData.hp/boar.userData.maxHp*100)+'%';}
+    var dtp=boar.position.distanceTo(player.position);
+    if(dtp<35){ document.getElementById('boarHP').style.display='block'; document.getElementById('boarHPFill').style.width=(boar.userData.hp)+'%'; }
     else document.getElementById('boarHP').style.display='none';
-    if(dtp<30){boarState='chase';document.getElementById('status').textContent='Status: DZIK!';document.getElementById('status').style.color='#ff5252';}
-    else if(dtp>42){boarState='patrol';document.getElementById('status').textContent='Status: spokój';document.getElementById('status').style.color='#a8ff78';}
-    if(boarState==='chase'){
-      const dir=player.position.clone().sub(boar.position); dir.y=0; dir.normalize();
-      boar.position.add(dir.multiplyScalar(8.8*dt));
+    if(dtp<28){ boarSt='chase'; document.getElementById('status').textContent='Status: DZIK!'; document.getElementById('status').style.color='#ff5252'; }
+    else if(dtp>40){ boarSt='patrol'; document.getElementById('status').textContent='Status: spokój'; document.getElementById('status').style.color='#a8ff78'; }
+    if(boarSt==='chase'){
+      var d=player.position.clone().sub(boar.position); d.y=0; d.normalize();
+      boar.position.add(d.multiplyScalar(8.5*dt));
       boar.lookAt(player.position.x,boar.position.y,player.position.z);
-      if(dtp<2.3){
-        state.health=Math.max(0,state.health-22*dt);
+      if(dtp<2.2){
+        state.health=Math.max(0,state.health-20*dt);
         document.getElementById('health').textContent='❤️ Życie: '+Math.floor(state.health);
         if(state.health<=0){
-          addMessage('Dzik mnie zjadł. Konsekwencja: respawn i wstyd.','ogorczak');
-          changeMood(-10); state.health=100; document.getElementById('health').textContent='❤️ Życie: 100';
-          player.position.set(0,0,0); velocity.set(0,0,0); boar.position.set(-40,0,-30); boarState='patrol';
+          addMsg('Dzik mnie zjadł. Respawn.','ogorczak'); setMood(-10);
+          state.health=100; document.getElementById('health').textContent='❤️ Życie: 100';
+          player.position.set(0,0,0); velocity.set(0,0,0); boar.position.set(-35,0,-28); boarSt='patrol';
         }
       }
     } else {
-      if(boar.position.distanceTo(boarTarget)<3||Math.random()<0.003) boarTarget.set((Math.random()-0.5)*WORLD*0.4,0,(Math.random()-0.5)*WORLD*0.4);
-      const dir=boarTarget.clone().sub(boar.position); dir.y=0; dir.normalize();
-      boar.position.add(dir.multiplyScalar(3.5*dt)); boar.lookAt(boarTarget.x,0,boarTarget.z);
+      if(boar.position.distanceTo(boarT)<3||Math.random()<0.003) boarT.set((Math.random()-0.5)*WORLD*0.35,0,(Math.random()-0.5)*WORLD*0.35);
+      var d=boarT.clone().sub(boar.position); d.y=0; d.normalize();
+      boar.position.add(d.multiplyScalar(3.2*dt)); boar.lookAt(boarT.x,0,boarT.z);
     }
   }
 
-  for(let i=projectiles.length-1;i>=0;i--){
-    const p=projectiles[i];
-    p.position.addScaledVector(p.userData.vel,dt); p.userData.life-=dt;
-    if(boar.userData.alive&&p.position.distanceTo(boar.position.clone().setY(0.55))<2.0){
-      boar.userData.hp-=p.userData.damage;
-      const knock=p.position.clone().sub(boar.position).normalize().multiplyScalar(-3.2);
-      boar.position.add(knock);
-      document.getElementById('boarHPFill').style.width=Math.max(0,boar.userData.hp/boar.userData.maxHp*100)+'%';
+  for(var i=projectiles.length-1;i>=0;i--){
+    var p=projectiles[i];
+    p.position.addScaledVector(p.userData.vel, dt); p.userData.life-=dt;
+    if(boar.userData.alive && p.position.distanceTo(boar.position.clone().setY(0.5))<2.0){
+      boar.userData.hp-=p.userData.dmg;
+      var kn=p.position.clone().sub(boar.position).normalize().multiplyScalar(-3);
+      boar.position.add(kn);
+      document.getElementById('boarHPFill').style.width=Math.max(0,boar.userData.hp)+'%';
       if(boar.userData.hp<=0){
-        boar.userData.alive=false; boar.visible=false; boarRespawn=16+Math.random()*12;
-        state.kills++; document.getElementById('kills').textContent='Dziki pokonane: '+state.kills;
+        boar.userData.alive=false; boar.visible=false; boarRes=15+Math.random()*10;
+        state.kills++; document.getElementById('kills').textContent='Dziki: '+state.kills;
         document.getElementById('boarHP').style.display='none';
-        addMessage(['Dzik pokonany. Chwilowy spokój.','Koniec chrumkania.','Kwadratowy 1 – natura 0.'][Math.floor(Math.random()*3)],'ogorczak');
-        changeMood(5);
-        if(!state.storyFlags.firstKill){state.storyFlags.firstKill=true; setTimeout(()=>addMessage('Piotrek na pewno usłyszy o bohaterstwie.','ogorczak'),2000);}
-        checkQuest();
+        addMsg('Dzik pokonany!','ogorczak'); setMood(5); checkQ();
       }
       scene.remove(p); projectiles.splice(i,1); continue;
     }
-    if(p.userData.life<=0||p.position.y<-2){scene.remove(p);projectiles.splice(i,1);}
+    if(p.userData.life<=0||p.position.y<-2){ scene.remove(p); projectiles.splice(i,1); }
   }
 
-  mushrooms.forEach(m=>{
-    if(m.userData.collected) return;
-    if(player.position.distanceTo(m.position)<1.55){
-      m.userData.collected=true; scene.remove(m);
-      const t=m.userData.type;
+  mushrooms.forEach(function(m){
+    if(m.userData.done) return;
+    if(player.position.distanceTo(m.position)<1.5){
+      m.userData.done=true; scene.remove(m);
+      var t=m.userData.type;
       if(t.poison){
-        state.poisonEaten++; state.health=Math.max(5,state.health-25);
+        state.poison++; state.health=Math.max(5,state.health-25);
         document.getElementById('health').textContent='❤️ Życie: '+Math.floor(state.health);
-        document.getElementById('poison').textContent='Trujące zjedzone: '+state.poisonEaten;
-        addMessage(`Auć! To był ${t.name}! Trujący.`,'ogorczak');
-        changeMood(-8);
-        if(!state.storyFlags.firstPoison){state.storyFlags.firstPoison=true; setTimeout(()=>addMessage('Piotrek będzie wściekły, jak się dowie.','ogorczak'),2500);}
-        piotrek.userData.mood=Math.max(0,piotrek.userData.mood-10);
+        document.getElementById('poison').textContent='Trujące: '+state.poison;
+        addMsg('Auć! '+t.name+' – trujący!','ogorczak'); setMood(-8);
       } else {
-        state.score+=t.points;
+        state.score+=t.pts;
         document.getElementById('score').textContent='Grzyby: '+state.score+' (jadalne)';
-        if(Math.random()<0.3) addMessage(`${t.name}! Smaczny.`,'ogorczak');
-        changeMood(1); checkQuest();
+        if(Math.random()<0.3) addMsg(t.name+'! Smaczny.','ogorczak');
+        setMood(1); checkQ();
       }
-      setTimeout(()=>spawnMushroom(true),9000+Math.random()*7000);
+      setTimeout(function(){ spawnMush(true); }, 8000+Math.random()*6000);
     }
   });
 
-  state.talkCooldown-=dt;
-  if(state.talkCooldown<=0&&Math.random()<0.00045){
-    state.talkCooldown=13+Math.random()*15;
-    addMessage(ogLines[Math.floor(Math.random()*ogLines.length)],'ogorczak');
+  state.talkCD-=dt;
+  if(state.talkCD<=0 && Math.random()<0.0004){
+    state.talkCD=14+Math.random()*14;
+    addMsg(ogLines[Math.floor(Math.random()*ogLines.length)],'ogorczak');
   }
-  maybePoop(dt);
-  renderer.render(scene,camera);
+  state.poopCD-=dt;
+  if(state.poopCD<=0 && Math.random()<0.00025){
+    state.poopCD=25+Math.random()*20;
+    var poop=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.42,0.3), new THREE.MeshStandardMaterial({color:0x6b8e23}));
+    poop.position.copy(player.position); poop.position.y=0.22;
+    scene.add(poop);
+    addMsg('Kupa-ogórek.','ogorczak'); setMood(-1);
+  }
+
+  renderer.render(scene, camera);
 }
-window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+window.addEventListener('resize', function(){
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
 animate();
-})(); // end IIFE
+
+})();
 </script>
 </body>
 </html>
